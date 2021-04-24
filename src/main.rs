@@ -1,21 +1,17 @@
-use serenity::{async_trait, cache::FromStrAndCache, model::id::UserId};
-use serenity::client::{Client, Context, EventHandler};
-use serenity::model::channel::Message;
-use serenity::framework::standard::{
-    StandardFramework,
-    CommandResult,
-    macros::{
-        command,
-        group
-    }
-};
-use std::{collections::{HashSet, hash_map::RandomState}, env, str::FromStr};
-use serde::Deserialize;
 use ron::de::from_reader;
+use serde::Deserialize;
+use serenity::client::{Client, Context, EventHandler};
+use serenity::framework::standard::{
+    macros::{command, group},
+    CommandResult, StandardFramework,
+};
+use serenity::model::channel::Message;
+use serenity::{async_trait, model::id::UserId};
+use std::collections::{hash_map::RandomState, HashSet};
 
 #[group]
-#[commands(ping)]
-struct General;
+#[commands(ping, links)]
+struct Helpers;
 
 struct Handler;
 
@@ -48,7 +44,7 @@ async fn main() {
     let framework = StandardFramework::new()
         .configure(|c| {
             let mut owners_hs: HashSet<UserId, RandomState> = HashSet::new();
-            
+
             for owner_id in infos.owners_ids.iter() {
                 let user_id: UserId = UserId(owner_id.clone());
                 owners_hs.insert(user_id);
@@ -59,7 +55,7 @@ async fn main() {
             c.owners(owners_hs);
             c
         })
-        .group(&GENERAL_GROUP);
+        .group(&HELPERS_GROUP);
 
     let token = infos.token;
     let mut client = Client::builder(token)
@@ -77,5 +73,23 @@ async fn main() {
 #[command]
 async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
     msg.reply(ctx, "Pong!").await?;
+    Ok(())
+}
+
+#[command]
+async fn links(ctx: &Context, msg: &Message) -> CommandResult {
+    msg.reply(
+        ctx,
+        format!(
+            "
+        Twitch:
+        - Star and Grey: https://www.twitch.tv/star_and_grey
+        
+        Youtube:
+        - Grey Monster: https://www.youtube.com/channel/UCFsWs9C4oDm_JMtmpLFX7eQ
+        - Emka: https://www.youtube.com/channel/UChUWneEkjNMqLNpp-vQ2DRQ"
+        ),
+    )
+    .await?;
     Ok(())
 }
