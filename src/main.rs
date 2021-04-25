@@ -1,6 +1,6 @@
 use ron::de::from_reader;
 use serde::Deserialize;
-use serenity::client::{Client, Context, EventHandler};
+use serenity::{client::{Client, Context, EventHandler}, framework::standard::{Args, DispatchError, macros::hook}};
 use serenity::framework::standard::{
     macros::{command, group},
     CommandResult, StandardFramework,
@@ -8,9 +8,10 @@ use serenity::framework::standard::{
 use serenity::model::channel::Message;
 use serenity::{async_trait, model::id::UserId};
 use std::collections::{hash_map::RandomState, HashSet};
+use rand::seq::SliceRandom;
 
 #[group]
-#[commands(ping, links)]
+#[commands(ping, links, eight_ball)]
 struct Helpers;
 
 struct Handler;
@@ -64,13 +65,13 @@ async fn main() {
         .await
         .expect("Error creating client");
 
-    // start listening for events by starting a single shard
     if let Err(why) = client.start().await {
         println!("An error occurred while running the client: {:?}", why);
     }
 }
 
 #[command]
+#[owners_only]
 async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
     msg.reply(ctx, "Pong!").await?;
     Ok(())
@@ -92,4 +93,64 @@ async fn links(ctx: &Context, msg: &Message) -> CommandResult {
     )
     .await?;
     Ok(())
+}
+
+#[command]
+#[min_args(1)]
+#[aliases("8ball")]
+#[description("Ask a question to Anna, she will reply truthfully. Repeated question might (will) annoy her.")]
+#[usage("!8ball [your question]")]
+async fn eight_ball(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    // TODO: Do something with the question
+    let question = args.single::<String>()?;
+    let answers: Vec<String> = vec![
+        // Normal answers
+        "As I see it, yes.".into(),
+        "Ask again later.".into(),
+        "Better not tell you now.".into(),
+        "Cannot predict now.".into(),
+        "Concentrate and ask again.".into(),
+        "Don’t count on it.".into(),
+        "It is certain.".into(),
+        "It is decidedly so.".into(),
+        "Most likely.".into(),
+        "My reply is no.".into(),
+        "My sources say no.".into(),
+        "Outlook not so good.".into(),
+        "Outlook good.".into(),
+        "Reply hazy, try again.".into(),
+        "Signs point to yes.".into(),
+        "Very doubtful.".into(),
+        "Without a doubt.".into(),
+        "Yes.".into(),
+        "Yes – definitely.".into(),
+        "You may rely on it.".into(),
+        
+        // Gifs
+        "https://tenor.com/Keve.gif".into(), // Mind blown
+        "https://tenor.com/xnba.gif".into(), // BOOM
+        "https://tenor.com/InWt.gif".into(), // Whatever
+    ];
+    let pick = answers.choose(&mut rand::thread_rng())
+        .expect("lol???")
+        .clone();
+    msg.reply(ctx, format!("{}", &pick)).await?;
+    Ok(())
+}
+
+#[hook]
+async fn unknown_command(ctx: &Context, msg: &Message, unknown_command_name: &str) {
+    let _ = msg.reply(ctx, format!("OH YEAH {}? {}?!?", msg.author.name.to_uppercase(), unknown_command_name.to_uppercase())).await;
+}
+
+#[hook]
+async fn dispatch_error(ctx: &Context, msg: &Message, error: DispatchError) {
+    if let DispatchError::Ratelimited(info) = error {
+        if info.is_first_try {
+            let _ = msg
+                .channel_id
+                .say(&ctx.http, &format!("Try this again in {} seconds.", info.as_secs()))
+                .await;
+        }
+    }
 }
