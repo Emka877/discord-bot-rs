@@ -17,8 +17,12 @@ use std::collections::{hash_map::RandomState, HashSet};
 mod roller;
 
 #[group]
-#[commands(ping, links, eight_ball, roll)]
+#[commands(ping, links)]
 struct Helpers;
+
+#[group]
+#[commands(eight_ball, roll)]
+struct Fun;
 
 struct Handler;
 
@@ -62,7 +66,8 @@ async fn main() {
             c.owners(owners_hs);
             c
         })
-        .group(&HELPERS_GROUP);
+        .group(&HELPERS_GROUP)
+        .group(&FUN_GROUP);
 
     let token = infos.token;
     let mut client = Client::builder(token)
