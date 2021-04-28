@@ -34,11 +34,14 @@ async fn main() {
         c.ignore_bots(infos.ignore_bots);
         c.owners(owners_hs);
         c
-    });
+    })
+    .group(&HELPERS_GROUP)
+    .group(&FUN_GROUP);
 
-    let token = infos.token;
-    let mut client = Client::builder(token)
-        .event_handler(DefaultHandler)
+    let mut handler: DefaultHandler = DefaultHandler::new();
+
+    let mut client = Client::builder(&infos.token)
+        .event_handler(handler)
         .framework(framework)
         .await
         .expect("Error creating client");
