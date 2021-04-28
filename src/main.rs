@@ -1,15 +1,18 @@
+use rand::seq::SliceRandom;
 use regex::Regex;
 use ron::de::from_reader;
 use serde::Deserialize;
-use serenity::{client::{Client, Context, EventHandler}, framework::standard::{Args, DispatchError, macros::hook}};
 use serenity::framework::standard::{
     macros::{command, group},
     CommandResult, StandardFramework,
 };
 use serenity::model::channel::Message;
 use serenity::{async_trait, model::id::UserId};
+use serenity::{
+    client::{Client, Context, EventHandler},
+    framework::standard::Args,
+};
 use std::collections::{hash_map::RandomState, HashSet};
-use rand::seq::SliceRandom;
 
 mod roller;
 
@@ -101,12 +104,14 @@ async fn links(ctx: &Context, msg: &Message) -> CommandResult {
 #[command]
 #[min_args(1)]
 #[aliases("8ball")]
-#[description("Ask a question to Anna, she will reply truthfully. Repeated question might (will) annoy her.")]
+#[description(
+    "Ask a question to Anna, she will reply truthfully. Repeated question might (will) annoy her."
+)]
 #[usage("!8ball [your question]")]
-async fn eight_ball(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+async fn eight_ball(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     // TODO: Do something with the question
     let question = args.message().to_string();
-    
+
     println!("8ball question debug: {}", question);
 
     let answers: Vec<String> = vec![
@@ -131,14 +136,14 @@ async fn eight_ball(ctx: &Context, msg: &Message, mut args: Args) -> CommandResu
         "Yes.".into(),
         "Yes – definitely.".into(),
         "You may rely on it.".into(),
-        
         // Gifs
         "https://tenor.com/Keve.gif".into(), // Mind blown
         "https://tenor.com/xnba.gif".into(), // BOOM
         "https://tenor.com/InWt.gif".into(), // Whatever
     ];
-    let pick = answers.choose(&mut rand::thread_rng())
-        .expect("lol???")
+    let pick = answers
+        .choose(&mut rand::thread_rng())
+        .expect("Problem trying to pick a random vector entry (1)")
         .clone();
     msg.reply(ctx, format!("{}", &pick)).await?;
     Ok(())
@@ -146,13 +151,14 @@ async fn eight_ball(ctx: &Context, msg: &Message, mut args: Args) -> CommandResu
 
 #[command]
 #[min_args(1)]
-async fn roll(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+#[allow(unused_assignments)]
+async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     let mut dices: u32 = 1;
     let mut faces: u32 = 6;
     let mut modifier: i32 = 0;
     let mut roll_params: String = args.message().to_string();
     roll_params = roll_params.replace::<&str>(" ", "");
-    
+
     // Regex
     let re = Regex::new(r"(?P<dices>\d*)(?:d|D)(?P<faces>\d+)(?P<mod>-?\+?\d+)?").unwrap();
     let caps = re.captures(roll_params.as_str()).unwrap();
@@ -164,9 +170,10 @@ async fn roll(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
     dices = u32::from_str_radix(dices_text, 10).unwrap_or(1);
     faces = u32::from_str_radix(faces_text, 10).unwrap_or(6);
     modifier = i32::from_str_radix(modifier_text, 10).unwrap_or(0);
-    
+
     let results = roller::Roller::roll_mod(dices, faces, modifier);
-    msg.reply(ctx, format!("You rolled: {}", results.to_string())).await?;
+    msg.reply(ctx, format!("You rolled: {}", results.to_string()))
+        .await?;
 
     Ok(())
 }

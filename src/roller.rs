@@ -1,7 +1,5 @@
-use std::thread;
-
-use rand::{self, Rng};
 use rand::thread_rng;
+use rand::{self, Rng};
 
 #[derive(Debug, Clone)]
 pub struct RollResult {
@@ -18,7 +16,7 @@ impl Default for RollResult {
             dices: 1,
             faces: 6,
             modifier: 0,
-            results: vec!(),
+            results: vec![],
             total: 0,
         }
     }
