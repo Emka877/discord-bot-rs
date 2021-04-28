@@ -1,4 +1,3 @@
-use ron::de::from_reader;
 use serenity::framework::standard::StandardFramework;
 use serenity::model::id::UserId;
 use serenity::{client::Client, framework::standard::macros::group};
@@ -19,18 +18,6 @@ pub struct Helpers;
 #[group]
 #[commands(eight_ball, roll)]
 pub struct Fun;
-
-pub fn read_bot_infos() -> BotInfo {
-    let file_path = "data/info.ron";
-    let file = std::fs::File::open(file_path).expect("Cannot open file data/info.ron");
-    match from_reader(file) {
-        Ok(result) => result,
-        Err(err) => {
-            println!("Failed to open info.ron: {}", err);
-            std::process::exit(1);
-        }
-    }
-}
 
 #[tokio::main]
 async fn main() {
