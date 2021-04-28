@@ -1,3 +1,4 @@
+use regex::Regex;
 use ron::de::from_reader;
 use serde::Deserialize;
 use serenity::{client::{Client, Context, EventHandler}, framework::standard::{Args, DispatchError, macros::hook}};
@@ -10,8 +11,10 @@ use serenity::{async_trait, model::id::UserId};
 use std::collections::{hash_map::RandomState, HashSet};
 use rand::seq::SliceRandom;
 
+mod roller;
+
 #[group]
-#[commands(ping, links, eight_ball)]
+#[commands(ping, links, eight_ball, roll)]
 struct Helpers;
 
 struct Handler;
@@ -102,7 +105,10 @@ async fn links(ctx: &Context, msg: &Message) -> CommandResult {
 #[usage("!8ball [your question]")]
 async fn eight_ball(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
     // TODO: Do something with the question
-    let question = args.single::<String>()?;
+    let question = args.message().to_string();
+    
+    println!("8ball question debug: {}", question);
+
     let answers: Vec<String> = vec![
         // Normal answers
         "As I see it, yes.".into(),
@@ -138,19 +144,29 @@ async fn eight_ball(ctx: &Context, msg: &Message, mut args: Args) -> CommandResu
     Ok(())
 }
 
-#[hook]
-async fn unknown_command(ctx: &Context, msg: &Message, unknown_command_name: &str) {
-    let _ = msg.reply(ctx, format!("OH YEAH {}? {}?!?", msg.author.name.to_uppercase(), unknown_command_name.to_uppercase())).await;
-}
+#[command]
+#[min_args(1)]
+async fn roll(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    let mut dices: u32 = 1;
+    let mut faces: u32 = 6;
+    let mut modifier: i32 = 0;
+    let mut roll_params: String = args.message().to_string();
+    roll_params = roll_params.replace::<&str>(" ", "");
+    
+    // Regex
+    let re = Regex::new(r"(?P<dices>\d*)(?:d|D)(?P<faces>\d+)(?P<mod>-?\+?\d+)?").unwrap();
+    let caps = re.captures(roll_params.as_str()).unwrap();
 
-#[hook]
-async fn dispatch_error(ctx: &Context, msg: &Message, error: DispatchError) {
-    if let DispatchError::Ratelimited(info) = error {
-        if info.is_first_try {
-            let _ = msg
-                .channel_id
-                .say(&ctx.http, &format!("Try this again in {} seconds.", info.as_secs()))
-                .await;
-        }
-    }
+    let dices_text = caps.name("dices").map_or("1", |x| x.as_str());
+    let faces_text = caps.name("faces").map_or("6", |x| x.as_str());
+    let modifier_text = caps.name("mod").map_or("0", |x| x.as_str());
+
+    dices = u32::from_str_radix(dices_text, 10).unwrap_or(1);
+    faces = u32::from_str_radix(faces_text, 10).unwrap_or(6);
+    modifier = i32::from_str_radix(modifier_text, 10).unwrap_or(0);
+    
+    let results = roller::Roller::roll_mod(dices, faces, modifier);
+    msg.reply(ctx, format!("You rolled: {}", results.to_string())).await?;
+
+    Ok(())
 }
