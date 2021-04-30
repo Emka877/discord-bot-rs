@@ -22,8 +22,6 @@ pub async fn eight_ball(ctx: &Context, msg: &Message, args: Args) -> CommandResu
     // TODO: Do something with the question
     let question = args.message().to_string();
 
-    println!("8ball question debug: {}", question);
-
     let answers: Vec<String> = vec![
         // Normal answers
         "As I see it, yes.".into(),

@@ -1,5 +1,6 @@
 use std::{ops::Add, sync::Arc};
 
+use rand::{prelude::SliceRandom, thread_rng};
 use serenity::{async_trait, client::{Context, EventHandler}, model::id::{ChannelId, GuildId}};
 use chrono::{Duration, Timelike, Utc};
 
@@ -16,10 +17,25 @@ impl EventHandler for DefaultHandler {
             loop {
                 tokio::time::sleep(tokio::time::Duration::from_millis(60000)).await;
                 let utc_plus_2 = Utc::now().add(chrono::Duration::hours(2));
+                // Tea time 16h and 22h
                 if (utc_plus_2.hour() == 16 && utc_plus_2.minute() < 1)
                     || (utc_plus_2.hour() == 22 && utc_plus_2.minute() < 1) {
                     if let Err(why) = ChannelId(76097907983392768)
                         .send_message(&ctx_a, |m| m.content("It's tea time!"))
+                        .await {
+                            eprintln!("{}", why);
+                        }
+                }
+
+                // Midnight
+                if utc_plus_2.hour() == 0 && utc_plus_2.minute() < 1 {
+                    let pick: Vec<&str> = vec![
+                        "IL EST MINUIIIIIIIIT ET TOUUUUUUUUUUT VA BIEEEEEEEEEEEN",
+                        "ON EST AUJOURD'HUI",
+                    ];
+                    let picked: &str = pick.choose(&mut thread_rng()).expect("oops").clone();
+                    if let Err(why) = ChannelId(76097907983392768)
+                        .send_message(&ctx_a, |m| m.content(picked))
                         .await {
                             eprintln!("{}", why);
                         }
