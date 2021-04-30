@@ -16,8 +16,8 @@ impl EventHandler for DefaultHandler {
             loop {
                 tokio::time::sleep(tokio::time::Duration::from_millis(60000)).await;
                 let utc_plus_2 = Utc::now().add(chrono::Duration::hours(2));
-                if (utc_plus_2.hour() == 16 && utc_plus_2.minute() > 0 && utc_plus_2.minute() < 1)
-                    || (utc_plus_2.hour() == 22 && utc_plus_2.minute() > 0 && utc_plus_2.minute() < 1) {
+                if (utc_plus_2.hour() == 16 && utc_plus_2.minute() < 1)
+                    || (utc_plus_2.hour() == 22 && utc_plus_2.minute() < 1) {
                     if let Err(why) = ChannelId(76097907983392768)
                         .send_message(&ctx_a, |m| m.content("It's tea time!"))
                         .await {
