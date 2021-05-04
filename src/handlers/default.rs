@@ -1,12 +1,14 @@
 use std::{ops::Add, sync::Arc};
 
+use chrono::{Timelike, Utc};
 use rand::{prelude::SliceRandom, thread_rng};
-use serenity::{async_trait, client::{Context, EventHandler}, model::id::{ChannelId, GuildId}};
-use chrono::{Duration, Timelike, Utc};
+use serenity::{
+    async_trait,
+    client::{Context, EventHandler},
+    model::id::{ChannelId, GuildId},
+};
 
-pub struct DefaultHandler {
-    
-}
+pub struct DefaultHandler {}
 
 #[async_trait]
 impl EventHandler for DefaultHandler {
@@ -20,12 +22,14 @@ impl EventHandler for DefaultHandler {
                 let utc_plus_2 = Utc::now().add(chrono::Duration::hours(2));
                 // Tea time 16h and 22h
                 if (utc_plus_2.hour() == 16 && utc_plus_2.minute() < 1)
-                    || (utc_plus_2.hour() == 22 && utc_plus_2.minute() < 1) {
+                    || (utc_plus_2.hour() == 22 && utc_plus_2.minute() < 1)
+                {
                     if let Err(why) = ChannelId(chan_id)
                         .send_message(&ctx_a, |m| m.content("It's tea time!"))
-                        .await {
-                            eprintln!("{}", why);
-                        }
+                        .await
+                    {
+                        eprintln!("{}", why);
+                    }
                 }
 
                 // Midnight
@@ -37,9 +41,10 @@ impl EventHandler for DefaultHandler {
                     let picked: &str = pick.choose(&mut thread_rng()).expect("oops").clone();
                     if let Err(why) = ChannelId(chan_id)
                         .send_message(&ctx_a, |m| m.content(picked))
-                        .await {
-                            eprintln!("{}", why);
-                        }
+                        .await
+                    {
+                        eprintln!("{}", why);
+                    }
                 }
             }
         });
