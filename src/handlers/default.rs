@@ -13,6 +13,7 @@ impl EventHandler for DefaultHandler {
     async fn cache_ready(&self, ctx: Context, _guilds: Vec<GuildId>) {
         let ctx = Arc::new(ctx);
         let ctx_a = Arc::clone(&ctx);
+        let chan_id: u64 = 76097907983392768;
         tokio::spawn(async move {
             loop {
                 tokio::time::sleep(tokio::time::Duration::from_millis(60000)).await;
@@ -20,7 +21,7 @@ impl EventHandler for DefaultHandler {
                 // Tea time 16h and 22h
                 if (utc_plus_2.hour() == 16 && utc_plus_2.minute() < 1)
                     || (utc_plus_2.hour() == 22 && utc_plus_2.minute() < 1) {
-                    if let Err(why) = ChannelId(76097907983392768)
+                    if let Err(why) = ChannelId(chan_id)
                         .send_message(&ctx_a, |m| m.content("It's tea time!"))
                         .await {
                             eprintln!("{}", why);
@@ -34,7 +35,7 @@ impl EventHandler for DefaultHandler {
                         "ON EST AUJOURD'HUI",
                     ];
                     let picked: &str = pick.choose(&mut thread_rng()).expect("oops").clone();
-                    if let Err(why) = ChannelId(76097907983392768)
+                    if let Err(why) = ChannelId(chan_id)
                         .send_message(&ctx_a, |m| m.content(picked))
                         .await {
                             eprintln!("{}", why);
