@@ -33,7 +33,7 @@ impl EventHandler for DefaultHandler {
                 }
 
                 // Midnight
-                if utc_plus_2.hour() == 0 && utc_plus_2.minute() < 60 {
+                if utc_plus_2.hour() == 0 && utc_plus_2.minute() < 1 {
                     let pick: Vec<&str> = vec![
                         "IL EST MINUIIIIIIIIT ET TOUUUUUUUUUUT VA BIEEEEEEEEEEEN",
                         "ON EST AUJOURD'HUI",
