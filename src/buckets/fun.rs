@@ -1,4 +1,6 @@
-use rand::seq::SliceRandom;
+use std::str::Split;
+
+use rand::{prelude::IteratorRandom, seq::SliceRandom};
 use regex::Regex;
 use serenity::{
     client::Context,
@@ -83,6 +85,30 @@ pub async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     let results = Roller::roll_mod(dices, faces, modifier);
     msg.reply(ctx, format!("You rolled: {}", results.to_string()))
         .await?;
+
+    Ok(())
+}
+
+#[command]
+#[min_args(3)]
+pub async fn pick(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    let separators: Vec<&str> = vec![
+        ",",
+        "or",
+        "ou",
+        "|",
+        "||",
+    ];
+    let mut content = args.message().to_string();
+    let author = msg.author.clone();
+    
+    let mut split: Split<&str> = "".split("");
+    for sep in separators.iter() {
+        split = content.split(sep);
+    }
+
+    let pick = split.choose(&mut rand::thread_rng()).expect("Cannot pick any option in picker!");
+    let _ = msg.reply_mention(&ctx.http, format!("{}", pick)).await;
 
     Ok(())
 }

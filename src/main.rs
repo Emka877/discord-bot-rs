@@ -6,10 +6,12 @@ use std::collections::{hash_map::RandomState, HashSet};
 mod buckets;
 mod handlers;
 mod utils;
+mod plugins;
 
 use buckets::*;
 use handlers::*;
 use utils::*;
+use plugins::*;
 
 #[group]
 #[commands(ping, links)]

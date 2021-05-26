@@ -60,7 +60,6 @@ impl EventHandler for DefaultHandler {
         // Check if message is link in channel# 76097907983392768
         // If it's a link, delete from 76097907983392768
         // And copy it to 847034469684346890 instead
-        // TODO: Accept gifs?
         let source_chanid: ChannelId = ChannelId(76097907983392768);
         let target_chanid: ChannelId = ChannelId(847034469684346890);
         let content = msg.content.clone();
