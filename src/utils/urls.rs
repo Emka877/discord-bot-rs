@@ -1,6 +1,8 @@
 use url::Url;
 
 pub fn does_he_look_like_a_link(msg: String) -> bool {
+    // TODO: put exceptions in info.ron and load it everytime this fn is called (?)
+
     let exceptions: Vec<&'static str> = vec![
         "tenor.com",
         "gif",
