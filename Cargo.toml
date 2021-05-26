@@ -15,6 +15,7 @@ lazy_static = "1.4.0"
 rand = "0.8.3"
 regex = "1.4.6"
 chrono = "0.4.19"
+url = "2.2.2"
 
 [dependencies.tokio]
 version = "1.5.0"
