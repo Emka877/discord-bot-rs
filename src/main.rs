@@ -18,7 +18,7 @@ use plugins::*;
 pub struct Helpers;
 
 #[group]
-#[commands(eight_ball, roll)]
+#[commands(eight_ball, roll, pick)]
 pub struct Fun;
 
 #[tokio::main]
