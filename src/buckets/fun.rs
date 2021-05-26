@@ -99,8 +99,7 @@ pub async fn pick(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
         "|",
         "||",
     ];
-    let mut content = args.message().to_string();
-    let author = msg.author.clone();
+    let content = args.message().to_string();
     
     let mut split: Split<&str> = "".split("");
     for sep in separators.iter() {
