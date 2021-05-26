@@ -63,11 +63,9 @@ impl EventHandler for DefaultHandler {
         // TODO: Accept gifs?
         let source_chanid: ChannelId = ChannelId(76097907983392768);
         let target_chanid: ChannelId = ChannelId(847034469684346890);
-        let dev_source_chanid: ChannelId = ChannelId(829346813357195304);
-        let dev_target_chanid: ChannelId = ChannelId(847057541402066975);
         let content = msg.content.clone();
 
-        if msg.channel_id == source_chanid || msg.channel_id == dev_source_chanid {
+        if msg.channel_id == source_chanid {
             if does_he_look_like_a_link(content.clone()) {
                 if let Err(why) = msg.delete(&ctx.http).await {
                     eprintln!("{}", why);
@@ -88,20 +86,11 @@ impl EventHandler for DefaultHandler {
                     });
                 }
 
-                if source_chanid != dev_source_chanid {
-                    if let Err(why) = target_chanid
-                        .send_message(&ctx.http, |m| m.content(out_msg))
-                        .await
-                    {
-                        eprintln!("{}", why);
-                    }
-                } else {
-                    if let Err(why) = dev_target_chanid
-                        .send_message(&ctx.http, |m| m.content(out_msg))
-                        .await
-                    {
-                        eprintln!("{}", why);
-                    }
+                if let Err(why) = target_chanid
+                    .send_message(&ctx.http, |m| m.content(out_msg))
+                    .await
+                {
+                    eprintln!("{}", why);
                 }
             }
         }
