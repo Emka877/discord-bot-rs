@@ -92,19 +92,9 @@ pub async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
 #[command]
 #[min_args(3)]
 pub async fn pick(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
-    let separators: Vec<&str> = vec![
-        ",",
-        "or",
-        "ou",
-        "|",
-        "||",
-    ];
+    let separator: &str = "|";
     let content = args.message().to_string();
-    
-    let mut split: Split<&str> = "".split("");
-    for sep in separators.iter() {
-        split = content.split(sep);
-    }
+    let split = content.split(separator);
 
     let pick = split.choose(&mut rand::thread_rng()).expect("Cannot pick any option in picker!");
     let _ = msg.reply_mention(&ctx.http, format!("{}", pick)).await;
