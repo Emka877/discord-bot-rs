@@ -90,7 +90,7 @@ pub async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
 }
 
 #[command]
-#[min_args(3)]
+#[min_args(1)]
 pub async fn pick(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     let separator: &str = "|";
     let content = args.message().to_string();
