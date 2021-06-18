@@ -1,2 +1,4 @@
+#![allow(dead_code)]
+
 pub static CHAN_ZIGGURAT_LONG: u64 = 76097907983392768;
 pub static CHAN_TEST_LONG: u64 = 829346813357195304;

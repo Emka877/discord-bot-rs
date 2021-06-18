@@ -18,7 +18,6 @@ impl EventHandler for DefaultHandler {
     async fn cache_ready(&self, ctx: Context, _guilds: Vec<GuildId>) {
         let ctx = Arc::new(ctx);
         let ctx_a = Arc::clone(&ctx);
-        let ctx_b: Arc<Context> = Arc::clone(&ctx);
 
         // Tea time and midnight announcer
         tokio::spawn(async move {
@@ -57,18 +56,9 @@ impl EventHandler for DefaultHandler {
                 }
             }
         });
-
-        // Humble Bundle weekly announcer
-        // Note: Updates every Wednesdays @ 0900pm
-        tokio::spawn(async move {
-            let sleep_for_seconds: u64 = 60 * 60;
-            loop {
-                tokio::time::sleep(tokio::time::Duration::from_secs(sleep_for_seconds)).await;
-            }
-        });
     }
 
-    async fn message(&self, ctx: Context, msg: Message) {
+    async fn message(&self, _ctx: Context, _msg: Message) {
         // Check if message is link in channel# 76097907983392768
         // If it's a link, delete from 76097907983392768
         // And copy it to 847034469684346890 instead

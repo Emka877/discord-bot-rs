@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use url::Url;
 
 pub fn does_he_look_like_a_link(msg: String) -> bool {

@@ -19,7 +19,7 @@ struct HumbleBundleDataBit {
 }
 
 #[command]
-pub async fn humble(ctx: &Context) -> CommandResult {
+pub async fn humble(_ctx: &Context) -> CommandResult {
     // let client = reqwest::Client::builder().build()?;
     // let result = client
     //     .get("https://hr-humblebundle.appspot.com/androidapp/v2/service_check")

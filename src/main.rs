@@ -12,6 +12,7 @@ mod constants;
 use buckets::*;
 use handlers::*;
 use utils::*;
+#[allow(unused_imports)]
 use plugins::*;
 
 #[group]
@@ -46,7 +47,7 @@ async fn main() {
     .group(&FUN_GROUP)
     .group(&UTILITIES_GROUP);
 
-    let mut handler: DefaultHandler = DefaultHandler::new();
+    let handler: DefaultHandler = DefaultHandler::new();
 
     let mut client = Client::builder(&infos.token)
         .event_handler(handler)

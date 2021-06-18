@@ -1,5 +1,3 @@
-use std::str::Split;
-
 use rand::{prelude::IteratorRandom, seq::SliceRandom};
 use regex::Regex;
 use serenity::{
@@ -22,7 +20,7 @@ use crate::utils::Roller;
 #[usage("!8ball [your question]")]
 pub async fn eight_ball(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     // TODO: Do something with the question
-    let question = args.message().to_string();
+    let _question = args.message().to_string();
 
     let answers: Vec<String> = vec![
         // Normal answers
@@ -85,7 +83,6 @@ pub async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     let results = Roller::roll_mod(dices, faces, modifier);
     msg.reply(ctx, format!("You rolled: {}", results.to_string()))
         .await?;
-
     Ok(())
 }
 

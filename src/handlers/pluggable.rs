@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use serenity::model::id::GuildId;
 use serenity::prelude::*;
 use serenity::model::channel::Message;

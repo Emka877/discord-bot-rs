@@ -17,9 +17,9 @@ pub struct TeaTimePlugin {
 
 #[serenity::async_trait]
 impl PluginTrait for TeaTimePlugin {
-    async fn on_message(&self, ctx: Context, message: Message) -> () {}
+    async fn on_message(&self, _ctx: Context, _message: Message) -> () {}
 
-    async fn on_ready(&self, ctx: Context, guilds: &Vec<serenity::model::id::GuildId>) -> () {
+    async fn on_ready(&self, ctx: Context, _guilds: &Vec<serenity::model::id::GuildId>) -> () {
         let ctx_a = Arc::new(ctx);
         let active: bool = self.active;
 
