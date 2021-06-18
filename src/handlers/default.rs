@@ -30,7 +30,11 @@ impl EventHandler for DefaultHandler {
                     || (utc_plus_2.hour() == 22 && utc_plus_2.minute() < 1)
                 {
                     if let Err(why) = ChannelId(CHAN_ZIGGURAT_LONG)
-                        .send_message(&ctx_a, |m| m.content("It's iced tea time!"))
+                        .send_message(&ctx_a, |m| { 
+                            m.content("It's iced tea time!");
+                            m.allowed_mentions(|am| am.parse(serenity::builder::ParseValue::Users));
+                            m
+                        })
                         .await
                     {
                         eprintln!("{}", why);
