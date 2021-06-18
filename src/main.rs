@@ -7,6 +7,7 @@ mod buckets;
 mod handlers;
 mod utils;
 mod plugins;
+mod constants;
 
 use buckets::*;
 use handlers::*;
@@ -20,6 +21,10 @@ pub struct Helpers;
 #[group]
 #[commands(eight_ball, roll, pick)]
 pub struct Fun;
+
+#[group]
+#[commands(humble)]
+pub struct Utilities;
 
 #[tokio::main]
 async fn main() {
@@ -38,7 +43,8 @@ async fn main() {
         c
     })
     .group(&HELPERS_GROUP)
-    .group(&FUN_GROUP);
+    .group(&FUN_GROUP)
+    .group(&UTILITIES_GROUP);
 
     let mut handler: DefaultHandler = DefaultHandler::new();
 

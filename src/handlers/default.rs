@@ -1,27 +1,26 @@
-use std::{ops::Add, result, sync::Arc};
-
+use crate::constants::*;
 use chrono::{Timelike, Utc};
 use rand::{prelude::SliceRandom, thread_rng};
 use serenity::{
     async_trait,
     client::{Context, EventHandler},
-    http::CacheHttp,
     model::{
-        channel::{Channel, Message},
+        channel::Message,
         id::{ChannelId, GuildId},
     },
 };
+use std::{ops::Add, sync::Arc};
 
-use crate::utils::does_he_look_like_a_link;
-
-pub struct DefaultHandler {}
+pub struct DefaultHandler;
 
 #[async_trait]
 impl EventHandler for DefaultHandler {
     async fn cache_ready(&self, ctx: Context, _guilds: Vec<GuildId>) {
         let ctx = Arc::new(ctx);
         let ctx_a = Arc::clone(&ctx);
-        let chan_id: u64 = 76097907983392768;
+        let ctx_b: Arc<Context> = Arc::clone(&ctx);
+
+        // Tea time and midnight announcer
         tokio::spawn(async move {
             loop {
                 tokio::time::sleep(tokio::time::Duration::from_millis(60000)).await;
@@ -30,8 +29,8 @@ impl EventHandler for DefaultHandler {
                 if (utc_plus_2.hour() == 16 && utc_plus_2.minute() < 1)
                     || (utc_plus_2.hour() == 22 && utc_plus_2.minute() < 1)
                 {
-                    if let Err(why) = ChannelId(chan_id)
-                        .send_message(&ctx_a, |m| m.content("It's tea time!"))
+                    if let Err(why) = ChannelId(CHAN_ZIGGURAT_LONG)
+                        .send_message(&ctx_a, |m| m.content("It's iced tea time!"))
                         .await
                     {
                         eprintln!("{}", why);
@@ -45,13 +44,22 @@ impl EventHandler for DefaultHandler {
                         "ON EST AUJOURD'HUI",
                     ];
                     let picked: &str = pick.choose(&mut thread_rng()).expect("oops").clone();
-                    if let Err(why) = ChannelId(chan_id)
+                    if let Err(why) = ChannelId(CHAN_ZIGGURAT_LONG)
                         .send_message(&ctx_a, |m| m.content(picked))
                         .await
                     {
                         eprintln!("{}", why);
                     }
                 }
+            }
+        });
+
+        // Humble Bundle weekly announcer
+        // Note: Updates every Wednesdays @ 0900pm
+        tokio::spawn(async move {
+            let sleep_for_seconds: u64 = 60 * 60;
+            loop {
+                tokio::time::sleep(tokio::time::Duration::from_secs(sleep_for_seconds)).await;
             }
         });
     }
