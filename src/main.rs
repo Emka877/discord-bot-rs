@@ -24,7 +24,7 @@ pub struct Helpers;
 pub struct Fun;
 
 #[group]
-#[commands(humble)]
+#[commands(version)]
 pub struct Utilities;
 
 #[tokio::main]

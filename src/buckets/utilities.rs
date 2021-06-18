@@ -1,39 +1,23 @@
-use std::collections::HashMap;
+use serenity::{client::Context, framework::standard::{CommandResult, macros::command}, model::channel::Message};
+use std::fs;
+use std::env::current_exe;
+use chrono::offset::Local;
+use chrono::DateTime;
 
-use serenity::{
-    framework::standard::{macros::command, CommandResult},
-    prelude::*,
-};
-use serde::{Deserialize};
-
-#[derive(Debug, Deserialize)]
-struct HumbleBundleData {
-    items: HashMap<String, String>,
-}
-
-#[derive(Debug, Deserialize)]
-struct HumbleBundleDataBit {
-    url: String,
-    bundle_name: String,
-    bundle_machine_name: String,
-}
 
 #[command]
-pub async fn humble(_ctx: &Context) -> CommandResult {
-    // let client = reqwest::Client::builder().build()?;
-    // let result = client
-    //     .get("https://hr-humblebundle.appspot.com/androidapp/v2/service_check")
-    //     .send()
-    //     .await?;
-    // let data = result.text().await?;
+pub async fn version(ctx: &Context, msg: &Message) -> CommandResult {
+    let exe = current_exe().unwrap();
+    let metas = fs::metadata(exe).unwrap();
+    let build_date: DateTime<Local> = metas.created().unwrap().into();
     
-    // println!("{}", data);
+    msg.reply(
+        ctx, 
+        format!("Anna version {}.\nBuilt on {}", 
+            env!("CARGO_PKG_VERSION"),
+            build_date
+        )
+    ).await?;
     
-    // let parsed = serde_json::from_str::<HumbleBundleData>(&data).unwrap();
-
-    // for item in parsed.items.iter() {
-    //     println!("{}: {}", item.0, item.1);
-    // }
-
     Ok(())
 }
