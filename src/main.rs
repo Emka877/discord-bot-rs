@@ -27,6 +27,9 @@ pub struct Fun;
 #[commands(version)]
 pub struct Utilities;
 
+#[group]
+pub struct Admin;
+
 #[tokio::main]
 async fn main() {
     let infos: BotInfo = read_bot_infos();
@@ -45,7 +48,8 @@ async fn main() {
     })
     .group(&HELPERS_GROUP)
     .group(&FUN_GROUP)
-    .group(&UTILITIES_GROUP);
+    .group(&UTILITIES_GROUP)
+    .group(&ADMIN_GROUP);
 
     let handler: DefaultHandler = DefaultHandler::new();
 

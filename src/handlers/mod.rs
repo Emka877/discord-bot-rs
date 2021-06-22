@@ -1,6 +1,4 @@
 mod default;
-mod pluggable;
-pub mod plugins;
+mod pluggable_fns; // Stays private
 
 pub use default::DefaultHandler;
-pub use pluggable::PluggableHandler;
