@@ -14,7 +14,7 @@ pub async fn version(ctx: &Context, msg: &Message) -> CommandResult {
 
     msg.reply(
         ctx, 
-        format!("\nAnna version {}.\nBuilt on {}", 
+        format!("\nAnna version {}\nBuilt on {}", 
             env!("CARGO_PKG_VERSION"),
             build_tz
         )
