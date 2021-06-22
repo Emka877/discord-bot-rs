@@ -2,3 +2,4 @@
 /data/**/*
 !/data/dummy_*.ron
 *.sh
+Cargo.lock
