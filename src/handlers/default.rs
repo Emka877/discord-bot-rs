@@ -8,7 +8,7 @@ use serenity::{
 };
 use std::sync::Arc;
 
-use super::pluggable_fns::*;
+use crate::plugins::*;
 
 pub struct DefaultHandler;
 
@@ -25,12 +25,12 @@ impl EventHandler for DefaultHandler {
         let ctx_a = Arc::clone(&ctx);
 
         // Tea time and midnight announcer
-        tea_time_announcer(ctx_a).await;
+        fn_tea_time::tea_time_announcer(ctx_a).await;
     }
 
     #[allow(unused_variables)]
     async fn message(&self, ctx: Context, msg: Message) {
         let ctx_a = Arc::new(ctx);
-        // links_mover(ctx_a, msg).await;
+        // fn_links_mover::links_mover(ctx_a, msg).await;
     }
 }
