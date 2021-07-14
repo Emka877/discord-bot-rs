@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use serenity::{
     client::Context,
     model::{channel::Message, id::ChannelId},
