@@ -1,3 +1,5 @@
+#[allow(dead_code)]
+
 use std::sync::Arc;
 use rand::{prelude::SliceRandom, thread_rng};
 use chrono::{Timelike, Utc};
