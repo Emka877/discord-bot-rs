@@ -94,7 +94,7 @@ pub async fn pick(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     let split = content.split(separator);
 
     let pick = split.choose(&mut rand::thread_rng()).expect("Cannot pick any option in picker!");
-    let _ = msg.reply_mention(&ctx.http, format!("{}", pick)).await;
+    let _ = msg.reply(&ctx.http, format!("{}", pick)).await;
 
     Ok(())
 }
