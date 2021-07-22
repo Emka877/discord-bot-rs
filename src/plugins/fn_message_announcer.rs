@@ -10,9 +10,9 @@ pub async fn message_announcer(ctx: Arc<Context>, msg: Message) -> () {
     let message_chan: u64 = msg.channel_id.as_u64().clone();
     let destination_chan: u64 = ZIGGURAT;
     
-    let author_name = msg.author.name;
+    // let author_name = msg.author.name;
     let source_chan = msg.channel_id.clone();
-    let chan_name = msg.channel_id.name(&ctx).await.unwrap_or("Inconnu".into());
+    // let chan_name = msg.channel_id.name(&ctx).await.unwrap_or("Inconnu".into());
     let is_link = msg.content.starts_with("http") || msg.content.starts_with("www");
 
     if !is_link {
@@ -21,7 +21,7 @@ pub async fn message_announcer(ctx: Arc<Context>, msg: Message) -> () {
 
     let built_message = MessageBuilder::new()
         .user(msg.author.id)
-        .push("vient de poster quelque chose sur")
+        .push(" vient de poster quelque chose sur ")
         .channel(source_chan)
         .build();
 
