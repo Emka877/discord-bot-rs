@@ -21,16 +21,12 @@ impl DefaultHandler {
 #[async_trait]
 impl EventHandler for DefaultHandler {
     async fn cache_ready(&self, ctx: Context, _guilds: Vec<GuildId>) {
-        let ctx = Arc::new(ctx);
-        let ctx_a = Arc::clone(&ctx);
-
         // Tea time and midnight announcer
-        fn_tea_time::tea_time_announcer(ctx_a).await;
+        fn_tea_time::tea_time_announcer(Arc::new(ctx)).await;
     }
 
     #[allow(unused_variables)]
     async fn message(&self, ctx: Context, msg: Message) {
-        let ctx_a = Arc::new(ctx);
-        // fn_links_mover::links_mover(ctx_a, msg).await;
+        fn_message_announcer::message_announcer(Arc::new(ctx), msg.clone()).await;
     }
 }
