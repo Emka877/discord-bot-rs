@@ -6,7 +6,7 @@ use chrono::{Timelike, Utc};
 use std::ops::Add;
 use serenity::{client::Context, model::id::ChannelId};
 
-use crate::constants::*;
+use crate::constants::channels::{ZIGGURAT};
 
 pub async fn tea_time_announcer(ctx: Arc<Context>) -> () {
     tokio::spawn(async move {
@@ -17,7 +17,7 @@ pub async fn tea_time_announcer(ctx: Arc<Context>) -> () {
             if (utc_plus_2.hour() == 16 && utc_plus_2.minute() < 1)
                 || (utc_plus_2.hour() == 22 && utc_plus_2.minute() < 1)
             {
-                if let Err(why) = ChannelId(CHAN_ZIGGURAT_LONG)
+                if let Err(why) = ChannelId(ZIGGURAT)
                     .send_message(&ctx, |m| { 
                         m.content("It's iced tea time!");
                         m.allowed_mentions(|am| am.parse(serenity::builder::ParseValue::Users));
@@ -36,7 +36,7 @@ pub async fn tea_time_announcer(ctx: Arc<Context>) -> () {
                     "ON EST AUJOURD'HUI",
                 ];
                 let picked: &str = pick.choose(&mut thread_rng()).expect("oops").clone();
-                if let Err(why) = ChannelId(CHAN_ZIGGURAT_LONG)
+                if let Err(why) = ChannelId(ZIGGURAT)
                     .send_message(&ctx, |m| m.content(picked))
                     .await
                 {
