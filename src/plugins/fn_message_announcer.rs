@@ -23,7 +23,7 @@ pub async fn message_announcer(ctx: Arc<Context>, msg: Message) -> () {
         .any(|&item| item == message_chan) {
             if let Err(why) = ChannelId(destination_chan)
                 .send_message(&ctx, |m| {
-                    m.content(format!("{} vient de poster dans le channel #{}.", author_name, chan_name));
+                    m.content(format!("{} vient de poster dans le channel #{}", author_name, chan_name));
                     m
                 })
                 .await
