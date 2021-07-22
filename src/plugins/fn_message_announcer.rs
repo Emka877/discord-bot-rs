@@ -10,7 +10,7 @@ pub async fn message_announcer(ctx: Arc<Context>, msg: Message) -> () {
     let message_chan: u64 = msg.channel_id.as_u64().clone();
     let destination_chan: u64 = ZIGGURAT;
     
-    let author_name = msg.author.name;
+    let author_name = msg.author_nick(&ctx.http).await.unwrap_or("ERREURLOL".into());
     let chan_name = msg.channel_id.name(&ctx).await.unwrap_or("Inconnu".into());
     let is_link = msg.content.starts_with("http") || msg.content.starts_with("www");
 
@@ -23,7 +23,7 @@ pub async fn message_announcer(ctx: Arc<Context>, msg: Message) -> () {
         .any(|&item| item == message_chan) {
             if let Err(why) = ChannelId(destination_chan)
                 .send_message(&ctx, |m| {
-                    m.content(format!("{} vient de poster dans le channel {}.", author_name, chan_name));
+                    m.content(format!("{} vient de poster dans le channel #{}.", author_name, chan_name));
                     m
                 })
                 .await
