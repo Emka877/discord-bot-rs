@@ -202,12 +202,12 @@ pub fn kelvin_to_celsius(kelvins: f32) -> f32 {
     kelvins - constant
 }
 
-fn is_thunderstorm_present(parsed_OW_data: &OpenWeatherApiData) -> bool {
+fn is_thunderstorm_present(parsed_ow_data: &OpenWeatherApiData) -> bool {
     let thunderstorm_main_id: Vec<i32> = vec![
         200, 201, 202, 210, 211, 212, 221, 230, 231, 232,
     ];
 
-    for weather in parsed_OW_data.weather.iter() {
+    for weather in parsed_ow_data.weather.iter() {
         if thunderstorm_main_id
             .iter()
             .any(|&cur| weather.id == cur) 
