@@ -4,7 +4,7 @@ use serenity::{client::Context, model::id::ChannelId, utils::MessageBuilder};
 use std::sync::Arc;
 use crate::constants::channels;
 
-const generic_error_message: &str = "Une erreur est survenue, veuillez engueuler le dev.";
+const GENERIC_ERROR_MESSAGE: &str = "Une erreur est survenue, veuillez engueuler le dev.";
 
 #[derive(Deserialize, Clone)]
 pub struct OpenWeatherApiCredentials {
@@ -142,20 +142,20 @@ pub async fn fetch_weather_for_city(mut city_name: String) -> Result<OpenWeather
         Ok(c) => c,
         Err(_) => {
             eprintln!("Could not create an API client with reqwest.");
-            return Err(generic_error_message.into());
+            return Err(GENERIC_ERROR_MESSAGE.into());
         },
     };
 
     let response = match client
         .get(api_call)
-        .query(&[("q", city_name.clone()), ("appid", creds.token)])
+        .query(&[("q", city_name.clone()), ("appid", creds.token), ("lang", "fr".into())])
         .send()
         .await
     {
         Ok(result) => result,
         Err(err) => { 
             eprintln!("Error sending a request to OW API: {}.", err);
-            return Err(generic_error_message.into());
+            return Err(GENERIC_ERROR_MESSAGE.into());
         },
     };
 
@@ -174,7 +174,7 @@ pub async fn fetch_weather_for_city(mut city_name: String) -> Result<OpenWeather
 
         // If none worked, then it's an internal parsing issue.
         eprintln!("Error while parsing the data coming from OW API: {}.", parsed.err().unwrap());
-        return Err(generic_error_message.into());
+        return Err(GENERIC_ERROR_MESSAGE.into());
     }
 }
 
