@@ -148,7 +148,13 @@ pub async fn fetch_weather_for_city(mut city_name: String) -> Result<OpenWeather
 
     let response = match client
         .get(api_call)
-        .query(&[("q", city_name.clone()), ("appid", creds.token), ("lang", "fr".into())])
+        .query(
+            &[
+                ("q", city_name.clone()), 
+                ("appid", creds.token), 
+                ("lang", "fr".into())
+            ]
+        )
         .send()
         .await
     {
