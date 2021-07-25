@@ -1,7 +1,13 @@
 BotInfo(
-    token: "put your own token here", // Get one here: https://discord.com/developers/applications
-    prefix: "!", // The prefix the bot will react to. Example "!help".
-    ignore_bots: true, // Recommended "true", or the bots might start talking to each other...
+    // Get one here: https://discord.com/developers/applications
+    token: "put your own token here",
+    
+    // The prefix the bot will react to. Example "!help".
+    prefix: "!",
+    
+    // Recommended "true", or the bots might start talking to each other...
+    ignore_bots: true,
+    
     /*
     Insert IDs of users you want to 'admin' the bot.
     Get their IDs directly from Discord => Right click on someone (on Discord), then click 'Copy ID'.
@@ -9,5 +15,6 @@ BotInfo(
     owners_ids: [
         76054847991840768,
     ],
-    // Done? Rename this file to "info.ron"
+    
+    /*** Done? Rename this file to "info.ron" ***/
 )

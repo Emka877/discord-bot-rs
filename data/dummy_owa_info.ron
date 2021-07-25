@@ -1,0 +1,9 @@
+OpenWeatherApiCredentials(
+    // Called "appid" in the queries
+    // Get a token here: https://openweathermap.org/
+    token: "",
+    // Write your city name here (preferably in lowercase)
+    city: "",
+
+    // Don't forget to rename this file to "owa_info.ron" when done.
+)

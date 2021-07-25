@@ -22,7 +22,8 @@ impl DefaultHandler {
 impl EventHandler for DefaultHandler {
     async fn cache_ready(&self, ctx: Context, _guilds: Vec<GuildId>) {
         // Tea time and midnight announcer
-        fn_tea_time::tea_time_announcer(Arc::new(ctx)).await;
+        fn_tea_time::tea_time_announcer(Arc::new(ctx.clone())).await;
+        weather::task_thunderstorm_sentry(Arc::new(ctx.clone())).await;
     }
 
     #[allow(unused_variables)]

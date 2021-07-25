@@ -16,7 +16,7 @@ use utils::*;
 use plugins::*;
 
 #[group]
-#[commands(ping, links)]
+#[commands(ping, links, weather)]
 pub struct Helpers;
 
 #[group]
