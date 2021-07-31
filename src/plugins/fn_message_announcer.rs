@@ -14,8 +14,9 @@ pub async fn message_announcer(ctx: Arc<Context>, msg: Message) -> () {
     let source_chan = msg.channel_id.clone();
     // let chan_name = msg.channel_id.name(&ctx).await.unwrap_or("Inconnu".into());
     let is_link = msg.content.starts_with("http") || msg.content.starts_with("www");
+    let is_attachment = !msg.attachments.is_empty();
 
-    if !is_link {
+    if !is_link || !is_attachment {
         return;
     }
 
