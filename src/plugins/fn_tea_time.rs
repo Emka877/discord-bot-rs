@@ -5,7 +5,7 @@ use rand::{prelude::SliceRandom, thread_rng};
 use serenity::{client::Context, model::id::ChannelId};
 use std::ops::Add;
 use std::sync::Arc;
-use super::weather::fetch_weather_default_city;
+use super::weather::{fetch_weather_default_city, kelvin_to_celsius};
 
 use crate::constants::channels::ZIGGURAT;
 
@@ -19,9 +19,10 @@ pub async fn tea_time_announcer(ctx: Arc<Context>) -> () {
             let cur_weather = fetch_weather_default_city().await;
             let mut beverage: String = "tea".into();
             if cur_weather.is_ok() {
-                let temperature: f32 = cur_weather.unwrap().main.temp;
+                let temperature_kelvins: f32 = cur_weather.unwrap().main.temp;
+                let temperature_celsius: f32 = kelvin_to_celsius(temperature_kelvins);
 
-                beverage = match temperature {
+                beverage = match temperature_celsius {
                     temp if temp <= 0.0 => "hot lava tea or chocolate".into(),
                     temp if temp > 0.0 && temp < 21.0 => "tea".into(),
                     temp if temp >= 21.0 && temp <= 30.0 => "iced tea".into(),
