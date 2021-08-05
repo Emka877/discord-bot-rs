@@ -16,7 +16,7 @@ pub async fn message_announcer(ctx: Arc<Context>, msg: Message) -> () {
     let is_link = msg.content.starts_with("http") || msg.content.starts_with("www");
     let is_attachment = !msg.attachments.is_empty();
 
-    if !is_link || !is_attachment {
+    if !is_link && !is_attachment {
         return;
     }
 
