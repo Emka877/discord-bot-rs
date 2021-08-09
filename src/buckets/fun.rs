@@ -10,7 +10,7 @@ use serenity::{
 };
 
 use crate::utils::{Roller, SanitizedMessage};
-use crate::utils::bot_reply::{reply_question};
+use crate::utils::bot_reply::reply_question;
 
 #[command]
 #[min_args(1)]
@@ -19,8 +19,7 @@ use crate::utils::bot_reply::{reply_question};
     "Ask a question to Anna, she will reply truthfully. Repeated question might (will) annoy her."
 )]
 #[usage("!8ball [your question]")]
-pub async fn eight_ball(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
-    // TODO: Do something with the question
+pub async fn eight_ball(ctx: &Context, msg: &Message) -> CommandResult {
     let san: SanitizedMessage = SanitizedMessage::from(msg);
     let question = san.args_single_line.clone();
     let reply = reply_question(question);

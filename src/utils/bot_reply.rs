@@ -1,6 +1,6 @@
 use rand::seq::SliceRandom;
 
-pub fn reply_question(question: String) -> String {
+pub fn reply_question(_question: String) -> String {
     let answers: Vec<String> = vec![
         // Normal answers
         "As I see it, yes.".into(),
