@@ -1,14 +1,11 @@
-use serenity::{
-    async_trait,
-    client::{Context, EventHandler},
-    model::{
+use serenity::{async_trait, client::{Context, EventHandler}, http::CacheHttp, model::{
         channel::Message,
         id::GuildId,
-    },
-};
+    }};
 use std::sync::Arc;
 
-use crate::plugins::*;
+use crate::{plugins::*, utils::SanitizedMessage};
+use crate::utils::bot_reply::reply_question;
 
 pub struct DefaultHandler;
 
@@ -28,6 +25,14 @@ impl EventHandler for DefaultHandler {
 
     #[allow(unused_variables)]
     async fn message(&self, ctx: Context, msg: Message) {
-        fn_message_announcer::message_announcer(Arc::new(ctx), msg.clone()).await;
+        let being_mentioned: bool = msg.mentions_me(&ctx.clone().http()).await.unwrap_or(false);
+        let sani: SanitizedMessage = msg.clone().into();
+        fn_message_announcer::message_announcer(Arc::new(ctx.clone()), msg.clone()).await;
+
+        if being_mentioned {
+            let question: String = sani.args_single_line;
+            let reply: String = reply_question(question);
+            let _ = msg.reply(&ctx.clone().http(), reply).await;
+        }
     }
 }

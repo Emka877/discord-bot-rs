@@ -1,4 +1,4 @@
-use rand::{prelude::IteratorRandom, seq::SliceRandom};
+use rand::prelude::IteratorRandom;
 use regex::Regex;
 use serenity::{
     client::Context,
@@ -9,7 +9,8 @@ use serenity::{
     model::channel::Message,
 };
 
-use crate::utils::Roller;
+use crate::utils::{Roller, SanitizedMessage};
+use crate::utils::bot_reply::{reply_question};
 
 #[command]
 #[min_args(1)]
@@ -20,40 +21,10 @@ use crate::utils::Roller;
 #[usage("!8ball [your question]")]
 pub async fn eight_ball(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     // TODO: Do something with the question
-    let _question = args.message().to_string();
-
-    let answers: Vec<String> = vec![
-        // Normal answers
-        "As I see it, yes.".into(),
-        "Ask again later.".into(),
-        "Better not tell you now.".into(),
-        "Cannot predict now.".into(),
-        "Concentrate and ask again.".into(),
-        "Don’t count on it.".into(),
-        "It is certain.".into(),
-        "It is decidedly so.".into(),
-        "Most likely.".into(),
-        "My reply is no.".into(),
-        "My sources say no.".into(),
-        "Outlook not so good.".into(),
-        "Outlook good.".into(),
-        "Reply hazy, try again.".into(),
-        "Signs point to yes.".into(),
-        "Very doubtful.".into(),
-        "Without a doubt.".into(),
-        "Yes.".into(),
-        "Yes – definitely.".into(),
-        "You may rely on it.".into(),
-        // Gifs
-        "https://tenor.com/Keve.gif".into(), // Mind blown
-        "https://tenor.com/xnba.gif".into(), // BOOM
-        "https://tenor.com/InWt.gif".into(), // Whatever
-    ];
-    let pick = answers
-        .choose(&mut rand::thread_rng())
-        .expect("Problem trying to pick a random vector entry (1)")
-        .clone();
-    msg.reply(ctx, format!("{}", &pick)).await?;
+    let san: SanitizedMessage = SanitizedMessage::from(msg);
+    let question = san.args_single_line.clone();
+    let reply = reply_question(question);
+    msg.reply(ctx, format!("{}", &reply)).await?;
     Ok(())
 }
 
