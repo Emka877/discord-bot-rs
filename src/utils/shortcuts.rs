@@ -1,6 +1,5 @@
 #![allow(dead_code)]
 
-use serenity::model::channel::Embed;
 use serenity::{model::id::ChannelId, prelude::*, utils::MessageBuilder};
 use serenity::http::CacheHttp;
 

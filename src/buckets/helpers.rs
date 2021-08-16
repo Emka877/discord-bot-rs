@@ -1,11 +1,19 @@
 use std::sync::Arc;
 
-use serenity::{client::Context, framework::standard::{macros::command, CommandResult}, http::CacheHttp, model::{channel::{Embed, Message}, id::ChannelId}, utils::{MessageBuilder, EmbedMessageBuilding}};
+use serenity::{
+    client::Context,
+    framework::standard::{macros::command, CommandResult},
+    http::CacheHttp,
+    model::{
+        channel::Message,
+        id::ChannelId,
+    },
+    utils::{EmbedMessageBuilding, MessageBuilder},
+};
 
-use crate::{constants::*, datastructs::CEmbedData, utils::shortcuts::{send_embed_ignore_error, send_embed_or_console_error, send_embed_or_discord_error}};
 use crate::plugins::weather::{fetch_weather_for_city, kelvin_to_celsius};
-use crate::shortcuts::send_or_discord_err;
 use crate::utils::SanitizedMessage;
+use crate::{constants::*, datastructs::CEmbedData, utils::shortcuts::send_embed_or_discord_error};
 
 #[command]
 #[owners_only]
@@ -30,9 +38,15 @@ pub async fn links(ctx: &Context, msg: &Message) -> CommandResult {
         .push_line("- Emka: https://www.youtube.com/channel/UChUWneEkjNMqLNpp-vQ2DRQ")
         .push_line("")
         .push_underline_line("Playlists Youtube Grey Monster:")
-        .push_named_link("Path of Exile", "https://www.youtube.com/playlist?list=PLqxDFE_3dqg4UXiu1jTqLSB0PaN8o7482")
+        .push_named_link(
+            "Path of Exile",
+            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg4UXiu1jTqLSB0PaN8o7482",
+        )
         .push_line("")
-        .push_named_link("Nioh 2", "https://youtube.com/playlist?list=PLqxDFE_3dqg6bhDcYdDHBUb8jkoQlBeiO");
+        .push_named_link(
+            "Nioh 2",
+            "https://youtube.com/playlist?list=PLqxDFE_3dqg6bhDcYdDHBUb8jkoQlBeiO",
+        );
 
     let mut embed_data = CEmbedData::default();
     embed_data.title = "Links".into();
@@ -74,7 +88,10 @@ pub async fn weather(ctx: &Context, msg: &Message) -> CommandResult {
                 if let Ok(sent) = msg.channel_id.say(&ctx, msg_builder).await {
                     let ctx_a = Arc::new(ctx.clone());
                     tokio::spawn(async move {
-                        tokio::time::sleep(tokio::time::Duration::from_secs(delete_reply_after_secs)).await;
+                        tokio::time::sleep(tokio::time::Duration::from_secs(
+                            delete_reply_after_secs,
+                        ))
+                        .await;
                         let _ = sent.delete(&ctx_a.http()).await;
                     });
                 }
