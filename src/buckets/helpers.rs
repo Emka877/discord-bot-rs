@@ -1,9 +1,11 @@
 use std::sync::Arc;
 
-use serenity::{client::Context, framework::standard::{macros::command, CommandResult}, http::CacheHttp, model::channel::Message, utils::MessageBuilder};
+use serenity::{client::Context, framework::standard::{macros::command, CommandResult}, http::CacheHttp, model::{channel::Message, id::ChannelId}, utils::MessageBuilder};
 
 use crate::plugins::weather::{fetch_weather_for_city, kelvin_to_celsius};
 use crate::utils::SanitizedMessage;
+use crate::constants::*;
+use crate::shortcuts::send_or_discord_err;
 
 #[command]
 #[owners_only]
@@ -14,19 +16,23 @@ pub async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 pub async fn links(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.reply(
-        ctx,
-        format!(
-            "
-        Twitch:
-        - Star and Grey: https://www.twitch.tv/star_and_grey
-        
-        Youtube:
-        - Grey Monster: https://www.youtube.com/channel/UCFsWs9C4oDm_JMtmpLFX7eQ
-        - Emka: https://www.youtube.com/channel/UChUWneEkjNMqLNpp-vQ2DRQ"
-        ),
-    )
-    .await?;
+    let mut builder: MessageBuilder = MessageBuilder::new();
+    let error_chan: u64 = channels::ERRORS;
+    let reply_chan: ChannelId = msg.channel_id;
+
+    builder
+        .push_line("")
+        .push_line("Twitch:")
+        .push_line("- Star and Grey: https://www.twitch.tv/star_and_grey")
+        .push_line("")
+        .push_line("Youtube:")
+        .push_line("- Emka: https://www.youtube.com/channel/UChUWneEkjNMqLNpp-vQ2DRQ")
+        .push_line("- Playlists Grey Monster:")
+        .push_line("Path of Exile: https://www.youtube.com/playlist?list=PLqxDFE_3dqg4UXiu1jTqLSB0PaN8o7482")
+        .push_line("Nioh 2: https://youtube.com/playlist?list=PLqxDFE_3dqg6bhDcYdDHBUb8jkoQlBeiO");
+
+    send_or_discord_err(&ctx, reply_chan, error_chan.into(), &mut builder).await;
+
     Ok(())
 }
 
