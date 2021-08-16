@@ -42,7 +42,38 @@ pub async fn send_embed_ignore_error(
     target_channel: ChannelId,
     data: CEmbedData,
 ) -> () {
-    let _ = target_channel.send_message(&ctx.http(), |m| {
+    let _err = send_embed_or_forward_error(ctx, target_channel, data).await;
+}
+
+pub async fn send_embed_or_discord_error(
+    ctx: &Context,
+    target_channel: ChannelId,
+    error_channel: ChannelId,
+    data: CEmbedData,
+) -> () {
+    if let Some(error) = send_embed_or_forward_error(ctx, target_channel, data).await {
+        if let Err(err2) = error_channel.say(&ctx.http(), format!("Error: {}", error)).await {
+            println!("{}", err2);
+        }
+    }
+}
+
+pub async fn send_embed_or_console_error(
+    ctx: &Context,
+    target_channel: ChannelId,
+    data: CEmbedData,
+) -> () {
+    if let Some(err) = send_embed_or_forward_error(ctx, target_channel, data).await {
+        println!("{}", err);
+    }
+}
+
+pub async fn send_embed_or_forward_error(
+    ctx: &Context,
+    target_channel: ChannelId,
+    data: CEmbedData,
+) -> Option<SerenityError> {
+    if let Err(err) = target_channel.send_message(&ctx.http(), |m| {
         m.content(data.content.clone());
         m.tts(data.tts);
 
@@ -56,5 +87,9 @@ pub async fn send_embed_ignore_error(
         });
 
         m
-    });
+    }).await {
+        return Some(err);
+    }
+
+    None
 }
