@@ -12,8 +12,9 @@ use serenity::{
 };
 
 use crate::plugins::weather::{fetch_weather_for_city, kelvin_to_celsius};
-use crate::utils::SanitizedMessage;
+use crate::datastructs::SanitizedMessage;
 use crate::{constants::*, datastructs::CEmbedData, utils::shortcuts::send_embed_or_discord_error};
+use crate::datastructs::owa_data::OpenWeatherApiData;
 
 #[command]
 #[owners_only]
@@ -70,7 +71,8 @@ pub async fn weather(ctx: &Context, msg: &Message) -> CommandResult {
         city = san_msg.args_single_line;
     }
 
-    match fetch_weather_for_city(city).await {
+    let weather_result: Result<OpenWeatherApiData, String> = fetch_weather_for_city(city).await;
+    match weather_result {
         Ok(weather) => {
             if weather.weather.len() > 0 {
                 let msg_builder = MessageBuilder::new()

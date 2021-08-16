@@ -4,7 +4,7 @@ use serenity::{async_trait, client::{Context, EventHandler}, http::CacheHttp, mo
     }};
 use std::sync::Arc;
 
-use crate::{plugins::*, utils::SanitizedMessage};
+use crate::{datastructs::SanitizedMessage, plugins::*};
 use crate::utils::bot_reply::reply_question;
 
 pub struct DefaultHandler;
