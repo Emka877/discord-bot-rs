@@ -19,7 +19,7 @@ impl DefaultHandler {
 impl EventHandler for DefaultHandler {
     async fn cache_ready(&self, ctx: Context, _guilds: Vec<GuildId>) {
         // Tea time and midnight announcer
-        fn_tea_time::tea_time_announcer(Arc::new(ctx.clone())).await;
+        tea_time::tea_time_announcer(Arc::new(ctx.clone())).await;
         weather::task_thunderstorm_sentry(Arc::new(ctx.clone())).await;
     }
 
@@ -27,7 +27,7 @@ impl EventHandler for DefaultHandler {
     async fn message(&self, ctx: Context, msg: Message) {
         let being_mentioned: bool = msg.mentions_me(&ctx.clone().http()).await.unwrap_or(false);
         let sani: SanitizedMessage = msg.clone().into();
-        fn_message_announcer::message_announcer(Arc::new(ctx.clone()), msg.clone()).await;
+        message_announcer::message_announcer(Arc::new(ctx.clone()), msg.clone()).await;
 
         if being_mentioned {
             let question: String = sani.args_single_line;
