@@ -9,7 +9,7 @@ pub struct CEmbedData {
 impl Default for CEmbedData {
     fn default() -> Self {
         CEmbedData {
-            content: "Must specify content".into(),
+            content: "".into(),
             tts: false,
             title: "".into(),
             description: "".into(),
