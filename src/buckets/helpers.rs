@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
-use serenity::{client::Context, framework::standard::{macros::command, CommandResult}, http::CacheHttp, model::{channel::Message, id::ChannelId}, utils::MessageBuilder};
+use serenity::{client::Context, framework::standard::{macros::command, CommandResult}, http::CacheHttp, model::{channel::{Embed, Message}, id::ChannelId}, utils::{MessageBuilder, EmbedMessageBuilding}};
 
+use crate::{constants::*, datastructs::CEmbedData, utils::shortcuts::{send_embed_ignore_error, send_embed_or_console_error, send_embed_or_discord_error}};
 use crate::plugins::weather::{fetch_weather_for_city, kelvin_to_celsius};
-use crate::utils::SanitizedMessage;
-use crate::constants::*;
 use crate::shortcuts::send_or_discord_err;
+use crate::utils::SanitizedMessage;
 
 #[command]
 #[owners_only]
@@ -22,16 +22,24 @@ pub async fn links(ctx: &Context, msg: &Message) -> CommandResult {
 
     builder
         .push_line("")
-        .push_line("Twitch:")
+        .push_bold_line("Twitch:")
         .push_line("- Star and Grey: https://www.twitch.tv/star_and_grey")
         .push_line("")
-        .push_line("Youtube:")
+        .push_bold_line("Youtube:")
+        .push_line("- Grey Monster: https://www.youtube.com/channel/UCFsWs9C4oDm_JMtmpLFX7eQ")
         .push_line("- Emka: https://www.youtube.com/channel/UChUWneEkjNMqLNpp-vQ2DRQ")
-        .push_line("- Playlists Grey Monster:")
-        .push_line("Path of Exile: https://www.youtube.com/playlist?list=PLqxDFE_3dqg4UXiu1jTqLSB0PaN8o7482")
-        .push_line("Nioh 2: https://youtube.com/playlist?list=PLqxDFE_3dqg6bhDcYdDHBUb8jkoQlBeiO");
+        .push_line("")
+        .push_underline_line("Playlists Youtube Grey Monster:")
+        .push_named_link("Path of Exile", "https://www.youtube.com/playlist?list=PLqxDFE_3dqg4UXiu1jTqLSB0PaN8o7482")
+        .push_line("")
+        .push_named_link("Nioh 2", "https://youtube.com/playlist?list=PLqxDFE_3dqg6bhDcYdDHBUb8jkoQlBeiO");
 
-    send_or_discord_err(&ctx, reply_chan, error_chan.into(), &mut builder).await;
+    let mut embed_data = CEmbedData::default();
+    embed_data.title = "Links".into();
+    embed_data.description = builder.build();
+
+    send_embed_or_discord_error(&ctx, reply_chan, error_chan.into(), embed_data).await;
+    // send_embed_or_console_error(&ctx, reply_chan, embed_data).await;
 
     Ok(())
 }
