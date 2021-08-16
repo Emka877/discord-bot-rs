@@ -8,6 +8,7 @@ mod handlers;
 mod utils;
 mod plugins;
 mod constants;
+mod datastructs;
 
 use buckets::*;
 use handlers::*;
