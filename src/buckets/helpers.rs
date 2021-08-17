@@ -47,6 +47,11 @@ pub async fn links(ctx: &Context, msg: &Message) -> CommandResult {
         .push_named_link(
             "Nioh 2",
             "https://youtube.com/playlist?list=PLqxDFE_3dqg6bhDcYdDHBUb8jkoQlBeiO",
+        )
+        .push_line("")
+        .push_named_link(
+            "Death's Door",
+            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg7MrOIo4tTlPIzcQaFOqvsc"
         );
 
     let mut embed_data = CEmbedData::default();
