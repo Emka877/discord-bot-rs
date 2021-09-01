@@ -10,6 +10,7 @@ mod utils;
 mod plugins;
 mod constants;
 mod datastructs;
+mod user_data;
 
 use buckets::*;
 use handlers::*;
@@ -25,7 +26,7 @@ pub struct Helpers;
 pub struct Fun;
 
 #[group]
-#[commands(version)]
+#[commands(version, move_message_manually)]
 pub struct Utilities;
 
 #[group]
