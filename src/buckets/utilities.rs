@@ -38,9 +38,10 @@ pub async fn move_message_manually(ctx: &Context, msg: &Message) -> CommandResul
     let src_channel_id: ChannelId = msg.channel_id;
     let msg_id_parsed: u64 = san.arguments.get(0).unwrap().parse::<u64>().unwrap();
     let message_id: MessageId = MessageId(msg_id_parsed);
-    let message = ctx.cache.message(src_channel_id, message_id).await.unwrap();
+    let message = ctx.http.get_message(src_channel_id.into(), message_id.into()).await.unwrap();
     let chan_id_parsed: u64 = san.arguments.get(1).unwrap().parse::<u64>().unwrap();
     let target_channel_id: ChannelId = ChannelId(chan_id_parsed);
+    let original_poster_name: String = message.author.name.clone();
 
     // Check if source and target channels are diff
     if msg.channel_id == target_channel_id {
@@ -49,11 +50,12 @@ pub async fn move_message_manually(ctx: &Context, msg: &Message) -> CommandResul
 
     // Copy content
     let mut msg_builder: MessageBuilder = MessageBuilder::new();
-    let content: String = message.content;
+    let content: String = message.content.clone();
     msg_builder.push_line(content);
+    msg_builder.push_line(format!("(Original Poster: {})", original_poster_name));
 
     // Delete
-    let del_result = msg.delete(&ctx.http).await;
+    let del_result = message.delete(&ctx.http).await;
 
     if del_result.is_ok() {
         // Send to new channel
