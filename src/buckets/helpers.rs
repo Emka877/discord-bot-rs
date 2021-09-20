@@ -40,8 +40,8 @@ pub async fn links(ctx: &Context, msg: &Message) -> CommandResult {
         .push_line("")
         .push_underline_line("Playlists Youtube Grey Monster:")
         .push_named_link(
-            "Path of Exile",
-            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg4UXiu1jTqLSB0PaN8o7482",
+            "Death's Door",
+            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg7MrOIo4tTlPIzcQaFOqvsc"
         )
         .push_line("")
         .push_named_link(
@@ -50,8 +50,8 @@ pub async fn links(ctx: &Context, msg: &Message) -> CommandResult {
         )
         .push_line("")
         .push_named_link(
-            "Death's Door",
-            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg7MrOIo4tTlPIzcQaFOqvsc"
+            "Path of Exile",
+            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg4UXiu1jTqLSB0PaN8o7482",
         );
 
     let mut embed_data = CEmbedData::default();
