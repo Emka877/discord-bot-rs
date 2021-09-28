@@ -24,6 +24,7 @@ pub async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[aliases(liens, twitch, youtube)]
 pub async fn links(ctx: &Context, msg: &Message) -> CommandResult {
     let mut builder: MessageBuilder = MessageBuilder::new();
     let error_chan: u64 = channels::ERRORS;
