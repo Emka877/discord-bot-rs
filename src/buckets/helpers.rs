@@ -33,7 +33,7 @@ pub async fn links(ctx: &Context, msg: &Message) -> CommandResult {
     builder
         .push_line("")
         .push_bold_line("Twitch:")
-        .push_line("- Star and Grey: https://www.twitch.tv/star_and_grey")
+        .push_line("- Grey and Star: https://www.twitch.tv/grey_and_star")
         .push_line("")
         .push_bold_line("Youtube:")
         .push_line("- Grey Monster: https://www.youtube.com/channel/UCFsWs9C4oDm_JMtmpLFX7eQ")
