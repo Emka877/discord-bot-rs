@@ -29,7 +29,8 @@ pub async fn send_or_forward_err(
     target_channel: ChannelId,
     reply: &mut MessageBuilder
 ) -> Option<SerenityError> {
-    if let Err(err) = target_channel.say(ctx.http(), reply.build()).await {
+    let built = format!("/tts {}", reply.build());
+    if let Err(err) = target_channel.say(ctx.http(), built).await {
         return Some(err);
     }
 
