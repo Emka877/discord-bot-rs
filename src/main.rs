@@ -1,4 +1,3 @@
-use datastructs::bot_info::{BotInfo, read_bot_infos};
 use serenity::framework::standard::StandardFramework;
 use serenity::model::id::UserId;
 use serenity::{client::Client, framework::standard::macros::group};
@@ -10,7 +9,8 @@ mod utils;
 mod plugins;
 mod constants;
 mod datastructs;
-mod user_data;
+
+use datastructs::bot_info::{BotInfo, read_bot_infos};
 
 use buckets::*;
 use handlers::*;
