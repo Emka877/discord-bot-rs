@@ -1,9 +1,9 @@
 #![allow(dead_code)]
 
-use chrono::{Timelike, Utc};
+use chrono::{DateTime, Timelike, Utc};
+use chrono_tz::{Europe::Brussels, Tz};
 use rand::{prelude::SliceRandom, thread_rng};
 use serenity::{client::Context, model::id::ChannelId};
-use std::ops::Add;
 use std::sync::Arc;
 use super::weather::{fetch_weather_default_city, kelvin_to_celsius};
 
@@ -13,7 +13,7 @@ pub async fn tea_time_announcer(ctx: Arc<Context>) -> () {
     tokio::spawn(async move {
         loop {
             tokio::time::sleep(tokio::time::Duration::from_millis(60000)).await;
-            let utc_plus_2 = Utc::now().add(chrono::Duration::hours(2));
+            let utc_plus_2: DateTime<Tz> = Utc::now().with_timezone(&Brussels);
             
             // Get the weather to decide for hot or cold beverage.
             let cur_weather = fetch_weather_default_city().await;
