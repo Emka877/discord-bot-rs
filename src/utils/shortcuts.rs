@@ -1,7 +1,8 @@
 #![allow(dead_code)]
 
-use serenity::{model::id::ChannelId, prelude::*, utils::MessageBuilder};
 use serenity::http::CacheHttp;
+use serenity::{model::id::ChannelId, prelude::*, utils::MessageBuilder};
+use serenity::model::id::UserId;
 
 use crate::datastructs::CEmbedData;
 
@@ -9,15 +10,24 @@ pub async fn send(ctx: &Context, target_channel: ChannelId, reply: &mut MessageB
     send_or_forward_err(ctx, target_channel, reply).await;
 }
 
-pub async fn send_or_console_err(ctx: &Context, target_channel: ChannelId, reply: &mut MessageBuilder) -> () {
+pub async fn send_or_console_err(
+    ctx: &Context,
+    target_channel: ChannelId,
+    reply: &mut MessageBuilder,
+) -> () {
     if let Some(err) = send_or_forward_err(ctx, target_channel, reply).await {
         println!("Error: {}", err);
     }
 }
 
-pub async fn send_or_discord_err(ctx: &Context, target_channel: ChannelId, error_target_channel: ChannelId, reply: &mut MessageBuilder) -> () {
+pub async fn send_or_discord_err(
+    ctx: &Context,
+    target_channel: ChannelId,
+    error_target_channel: ChannelId,
+    reply: &mut MessageBuilder,
+) -> () {
     if let Some(err) = send_or_forward_err(ctx, target_channel, reply).await {
-        let error_message: String = format!("Erreur: {}", err);
+        let error_message: String = format!("Error: {}", err);
         if let Err(err2) = error_target_channel.say(ctx.http(), error_message).await {
             println!("{}", err2);
         }
@@ -27,9 +37,9 @@ pub async fn send_or_discord_err(ctx: &Context, target_channel: ChannelId, error
 pub async fn send_or_forward_err(
     ctx: &Context,
     target_channel: ChannelId,
-    reply: &mut MessageBuilder
+    reply: &mut MessageBuilder,
 ) -> Option<SerenityError> {
-    let built = format!("/tts {}", reply.build());
+    let built = format!("{}", reply.build());
     if let Err(err) = target_channel.say(ctx.http(), built).await {
         return Some(err);
     }
@@ -52,7 +62,10 @@ pub async fn send_embed_or_discord_error(
     data: CEmbedData,
 ) -> () {
     if let Some(error) = send_embed_or_forward_error(ctx, target_channel, data).await {
-        if let Err(err2) = error_channel.say(&ctx.http(), format!("Error: {}", error)).await {
+        if let Err(err2) = error_channel
+            .say(&ctx.http(), format!("Error: {}", error))
+            .await
+        {
             println!("{}", err2);
         }
     }
@@ -73,23 +86,43 @@ pub async fn send_embed_or_forward_error(
     target_channel: ChannelId,
     data: CEmbedData,
 ) -> Option<SerenityError> {
-    if let Err(err) = target_channel.send_message(&ctx.http(), |m| {
-        m.content(data.content.clone());
-        m.tts(data.tts);
+    if let Err(err) = target_channel
+        .send_message(&ctx.http(), |m| {
+            m.content(data.content.clone());
+            m.tts(data.tts);
 
-        m.embed(|me| {
-            me.title(data.title.clone());
-            me.description(data.description.clone());
-            if data.thumbnail.is_some() {
-                me.thumbnail(data.thumbnail.unwrap());
-            }
-            me
-        });
+            m.embed(|me| {
+                me.title(data.title.clone());
+                me.description(data.description.clone());
+                if data.thumbnail.is_some() {
+                    me.thumbnail(data.thumbnail.unwrap());
+                }
+                me
+            });
 
-        m
-    }).await {
+            m
+        })
+        .await
+    {
         return Some(err);
     }
 
     None
+}
+
+pub async fn send_private_message_or_console_error(context: &Context, user_id: UserId, message_content: &mut MessageBuilder) -> () {
+    let private_channel = user_id.create_dm_channel(&context.http).await;
+
+    if private_channel.is_err() {
+        eprintln!("Cannot create private channel: {}", private_channel.unwrap().to_string());
+    } else {
+        // Shadowing
+        let private_channel = private_channel.unwrap();
+        if let Err(send_result) = private_channel.send_message(&context.http, |m| {
+            m.content(message_content.build());
+            m
+        }).await {
+            eprintln!("Cannot send a private message: {}", send_result.to_string());
+        }
+    }
 }
