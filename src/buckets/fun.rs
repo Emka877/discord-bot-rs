@@ -28,7 +28,6 @@ pub async fn eight_ball(ctx: &Context, msg: &Message) -> CommandResult {
     Ok(())
 }
 
-// TODO: divide long rolls into multiple messages
 #[command]
 #[min_args(1)]
 #[allow(unused_assignments)]
