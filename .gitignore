@@ -4,3 +4,4 @@
 *.sh
 Cargo.lock
 logs
+/.idea
