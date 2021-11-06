@@ -10,4 +10,7 @@ pub mod channels {
     // Admin channels
     pub static EDITS: u64 = 876163865862373386;
     pub static ERRORS: u64 = 876173856526712922;
+    // Permission Groups (by descending order of importance, omitting admin groups)
+    pub static RED: u64 = 905601404524167228;
+    pub static INFRARED: u64 = 905600831984918589;
 }
