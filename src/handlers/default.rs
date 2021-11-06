@@ -2,7 +2,7 @@ use serenity::{
     async_trait,
     client::{Context, EventHandler},
     http::CacheHttp,
-    model::{channel::Message, guild::Member, id::GuildId, prelude::Ready},
+    model::{channel::Message, guild::Member, id::GuildId},
 };
 use std::sync::Arc;
 
