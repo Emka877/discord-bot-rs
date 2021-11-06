@@ -17,7 +17,7 @@ use crate::datastructs::SanitizedMessage;
 #[min_args(1)]
 #[aliases("8ball")]
 #[description(
-    "Ask a question to Anna, she will reply truthfully. Repeated question might (will) annoy her."
+    "Ask a question to the bot, she will reply truthfully. Repeated question might (will) annoy it."
 )]
 #[usage("!8ball [your question]")]
 pub async fn eight_ball(ctx: &Context, msg: &Message) -> CommandResult {

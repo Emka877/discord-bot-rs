@@ -9,7 +9,6 @@ use serenity::{
 };
 use std::env::current_exe;
 use std::fs;
-use serenity::framework::standard::CommandError;
 
 use crate::utils::shortcuts::send_or_discord_err;
 use crate::{constants::channels::ERRORS, datastructs::SanitizedMessage};
@@ -25,7 +24,7 @@ pub async fn version(ctx: &Context, msg: &Message) -> CommandResult {
     msg.reply(
         ctx,
         format!(
-            "\nAnna version {}\nBuilt on {}",
+            "\nDiscord bot version {}\nBuilt on {}",
             env!("CARGO_PKG_VERSION"),
             build_tz
         ),
