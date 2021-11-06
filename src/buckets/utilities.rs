@@ -91,7 +91,6 @@ pub async fn not_a_bot(ctx: &Context, msg: &Message) -> CommandResult {
         } else {
             if let Err(role_error) = &ctx.http.add_member_role(guild_id.into(), user.id.into(), infrared_role_id.into()).await {
                 eprintln!("Cannot assign role to user: {}", role_error.to_string());
-                return Err(CommandError::from("Cannot assign role to user: {}", role_error.to_string()));
             }
             let _ = msg.reply_mention(&ctx.http, "You are now confirmed.").await;
         }
