@@ -13,4 +13,5 @@ pub mod channels {
     // Permission Groups (by descending order of importance, omitting admin groups)
     pub static RED: u64 = 905601404524167228;
     pub static INFRARED: u64 = 905600831984918589;
+    pub static EVERYONE: u64 = 76097907983392768;
 }
