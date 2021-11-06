@@ -1,11 +1,13 @@
-use serenity::{async_trait, client::{Context, EventHandler}, http::CacheHttp, model::{
-        channel::Message,
-        id::GuildId,
-    }};
+use serenity::{
+    async_trait,
+    client::{Context, EventHandler},
+    http::CacheHttp,
+    model::{channel::Message, guild::Member, id::GuildId, prelude::Ready},
+};
 use std::sync::Arc;
 
-use crate::{datastructs::SanitizedMessage, plugins::*};
 use crate::utils::bot_reply::reply_question;
+use crate::{datastructs::SanitizedMessage, plugins::*};
 
 pub struct DefaultHandler;
 
@@ -21,6 +23,11 @@ impl EventHandler for DefaultHandler {
         // Tea time and midnight announcer
         tea_time::tea_time_announcer(Arc::new(ctx.clone())).await;
         weather::task_thunderstorm_sentry(Arc::new(ctx.clone())).await;
+    }
+
+    async fn guild_member_addition(&self, ctx: Context, _guild_id: GuildId, new_member: Member) {
+        println!("A new client connects the server, sending instructions...");
+        join_message::send_join_message(Arc::new(ctx.clone()), new_member).await;
     }
 
     #[allow(unused_variables)]
