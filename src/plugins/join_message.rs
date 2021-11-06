@@ -3,26 +3,15 @@ use serenity::model::id::ChannelId;
 use serenity::utils::MessageBuilder;
 use serenity::{client::Context, model::guild::Member};
 use std::sync::Arc;
+use crate::utils::shortcuts::send_or_console_err;
 
 pub async fn send_join_message(ctx: Arc<Context>, member: Member) {
-    let message = MessageBuilder::new()
+    let mut message = MessageBuilder::new()
         .push_line("Welcome, ")
         .user(member.clone())
         .push_line(
             "! Please write or private message me `!notabot` to confirm joining this server.",
-        )
-        .build();
-    let landing_channel: ChannelId = ChannelId::from(LANDING_CHANNEL);
-    if let Err(welcome_error) = landing_channel
-        .send_message(&ctx.http, |m| {
-            m.content(message);
-            m
-        })
-        .await
-    {
-        eprintln!(
-            "Error sending welcome message: {}",
-            welcome_error.to_string()
         );
-    }
+    let landing_channel: ChannelId = ChannelId::from(LANDING_CHANNEL);
+    send_or_console_err(&ctx, landing_channel, &mut message);
 }
