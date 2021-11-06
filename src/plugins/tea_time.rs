@@ -2,7 +2,6 @@
 
 use chrono::{DateTime, Timelike, Utc};
 use chrono_tz::{Europe::Brussels, Tz};
-use rand::{prelude::SliceRandom, thread_rng};
 use serenity::{client::Context, model::id::ChannelId};
 use std::sync::Arc;
 use super::weather::{fetch_weather_default_city, kelvin_to_celsius};
@@ -48,19 +47,19 @@ pub async fn tea_time_announcer(ctx: Arc<Context>) -> () {
             }
 
             // Midnight
-            if utc_plus_2.hour() == 0 && utc_plus_2.minute() < 1 && utc_plus_2.second() < 58 {
-                let pick: Vec<&str> = vec![
-                    "IL EST MINUIIIIIIIIT ET TOUUUUUUUUUUT VA BIEEEEEEEEEEEN",
-                    "ON EST AUJOURD'HUI",
-                ];
-                let picked: &str = pick.choose(&mut thread_rng()).expect("oops").clone();
-                if let Err(why) = ChannelId(ZIGGURAT)
-                    .send_message(&ctx, |m| m.content(picked))
-                    .await
-                {
-                    eprintln!("{}", why);
-                }
-            }
+            // if utc_plus_2.hour() == 0 && utc_plus_2.minute() < 1 && utc_plus_2.second() < 58 {
+            //     let pick: Vec<&str> = vec![
+            //         "IL EST MINUIIIIIIIIT ET TOUUUUUUUUUUT VA BIEEEEEEEEEEEN",
+            //         "ON EST AUJOURD'HUI",
+            //     ];
+            //     let picked: &str = pick.choose(&mut thread_rng()).expect("oops").clone();
+            //     if let Err(why) = ChannelId(ZIGGURAT)
+            //         .send_message(&ctx, |m| m.content(picked))
+            //         .await
+            //     {
+            //         eprintln!("{}", why);
+            //     }
+            // }
         }
     });
 }
