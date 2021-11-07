@@ -53,6 +53,11 @@ pub async fn links(ctx: &Context, msg: &Message) -> CommandResult {
         .push_named_link(
             "Path of Exile",
             "https://www.youtube.com/playlist?list=PLqxDFE_3dqg4UXiu1jTqLSB0PaN8o7482",
+        )
+        .push_line("")
+        .push_named_link(
+            "Sekiro", 
+            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg4IV5srX1vYiL-Wxcs3sCKy"
         );
 
     let mut embed_data = CEmbedData::default();
