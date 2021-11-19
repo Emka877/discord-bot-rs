@@ -4,9 +4,11 @@
 pub mod igdb {
     use ron::de::from_reader;
     use serde::{Deserialize, Serialize};
-    use serenity::futures::lock::Mutex;
+    use serenity::futures::lock::{Mutex, MutexGuard};
     use std::{fs::File, path::PathBuf};
     use lazy_static::lazy_static;
+    use chrono::{DateTime, Utc};
+    use chrono_tz::{Tz, Europe::Brussels};
 
     // Storage for the login token
     lazy_static!(
@@ -17,6 +19,7 @@ pub mod igdb {
         static ref TOKEN: Mutex<String> = Mutex::new("".to_owned());
         static ref EXPIRES_IN: Mutex<i32> = Mutex::new(0 as i32);
         static ref TOKEN_TYPE: Mutex<String> = Mutex::new("".to_owned());
+        static ref EXPIRY_DATE: Mutex<Option<DateTime<Tz>>> = Mutex::new(None);
     );
 
     /// URLs to use to query the GOG API
@@ -91,7 +94,7 @@ pub mod igdb {
     }
 
     /// Returns a token
-    async fn log_into_igdb() -> Result<(), Box<dyn std::error::Error>> {
+    async fn log_into_igdb() -> Result<IGDBTokenInfo, Box<dyn std::error::Error>> {
         // Do the reqwest
         let client: reqwest::Client = reqwest::Client::new();
         let login_data: IGDBSecret = read_secrets_from_file().await?;
@@ -107,7 +110,30 @@ pub mod igdb {
         *EXPIRES_IN.lock().await = token_infos.expires_in;
         *TOKEN_TYPE.lock().await = token_infos.token_type.clone();
 
-        Ok(())
+        Ok(token_infos)
+    }
+
+    async fn is_token_expired() -> bool {
+        let expiry: MutexGuard<Option<DateTime<Tz>>> = EXPIRY_DATE.lock().await;
+        let now: DateTime<Tz> = Utc::now().with_timezone(&Brussels);
+
+        // No expiry date set
+        if expiry.is_none() {
+            return true;
+        } else {
+            let expiry: DateTime<Tz> = expiry.unwrap();
+            if now >= expiry {
+                return true;
+            }
+        }
+
+        false
+    }
+
+    async fn ensure_logged_in() -> () {
+        if is_token_expired().await {
+            let _ = log_into_igdb().await;
+        }
     }
 
     #[derive(Debug, Deserialize, Clone)]
@@ -132,6 +158,9 @@ pub mod igdb {
     /// 
     /// Returns 
     pub async fn query_game_by_name(game_name: String) -> Result<IGDBGameSearchResponseData, Box<dyn std::error::Error>> {
+        // Make it a macro?
+        ensure_logged_in().await;
+
         let client = reqwest::Client::new();
         let client_id: String = CLIENT_ID.lock().await.clone();
         let token: String = format!("{} {}", TOKEN_TYPE.lock().await.clone(), TOKEN.lock().await.clone());
