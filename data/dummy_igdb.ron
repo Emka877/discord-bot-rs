@@ -1,0 +1,11 @@
+IGDBSecret(
+    // Register your application here: https://dev.twitch.tv/console/apps/create
+
+    // Your client ID
+    token: "Write your client ID here",
+
+    // Your client secret
+    secret: "Write your client secret here",
+    
+    /*!! Rename this file to "igdb.ron" !!*/
+)
