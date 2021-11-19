@@ -5,8 +5,21 @@ pub mod igdb {
     #![allow(unused_variables, dead_code)]
 
     use ron::de::from_reader;
-    use serde::Deserialize;
+    use serde::{Deserialize, Serialize};
+    use serenity::futures::lock::Mutex;
     use std::{fs::File, path::PathBuf};
+    use lazy_static::lazy_static;
+
+    // Storage for the login token
+    lazy_static!(
+        // Client ID (not the secret)
+        static ref CLIENT_ID: Mutex<String> = Mutex::new("".to_owned());
+
+        // IGDB Token infos
+        static ref TOKEN: Mutex<String> = Mutex::new("".to_owned());
+        static ref EXPIRES_IN: Mutex<i32> = Mutex::new(0 as i32);
+        static ref TOKEN_TYPE: Mutex<String> = Mutex::new("".to_owned());
+    );
 
     /// URLs to use to query the GOG API
     mod endpoints {
@@ -25,6 +38,15 @@ pub mod igdb {
             /// 
             /// grant_type (str) and must be set to "client_credentials"
             pub const URL: &'static str = "https://id.twitch.tv/oauth2/token";
+        }
+
+        pub mod search {
+            /// IGDB Search API
+            /// 
+            /// Method: POST
+            /// 
+            /// Parameters: See https://api-docs.igdb.com/?java#search
+            pub const SEARCH_GAME: &'static str = "https://api.igdb.com/v4/games/";
         }
     }
 
@@ -48,27 +70,78 @@ pub mod igdb {
         }
     }
 
-    /// Contains the answer data to a login request again the IGDB API
-    pub struct IGDBTokenInfo {
+    #[derive(Debug, Deserialize)]
+    struct IGDBTokenInfo {
         access_token: String,
-        expires_in: u32,
+        expires_in: i32,
         token_type: String,
     }
 
-    pub fn read_secrets_from_file() -> Option<IGDBSecret> {
+    /// Reads your IGDB secrets from the data/igdb.ron file.
+    /// 
+    /// Also stores your client id (not client secret), in memory for quick access.
+    /// 
+    /// See data/dummy_igdb.ron for an example.
+    pub async fn read_secrets_from_file() -> Result<IGDBSecret, Box<dyn std::error::Error>> {
         let path: PathBuf = PathBuf::from("data/igdb.ron");
         let file: File = File::open(path).expect("Cannot open file data/igdb.ron");
-        match from_reader(file) {
-            Ok(data) => data,
-            Err(_) => None,
-        }
+        
+        let read: IGDBSecret = from_reader(file)?;
+        *CLIENT_ID.lock().await = read.client_id.clone();
+
+        Ok(read)
     }
 
     /// Returns a token
-    pub fn login_to_igdb() -> Result<IGDBTokenInfo, String> {
-        
-        todo!()
+    pub async fn log_into_igdb() -> Result<(), Box<dyn std::error::Error>> {
+        // Do the reqwest
+        let client: reqwest::Client = reqwest::Client::new();
+        let response = client.get(endpoints::auth::URL)
+            .send()
+            .await?; // Returns a reqwest error if something bad happens
+        // Parse the response JSON into a plain old structure
+        let token_infos: IGDBTokenInfo = response.json::<IGDBTokenInfo>().await?;
+        // Store the token infos in memory
+        // Might consider simply write these to a file, but then it would be readable by anyone (encrypt?)
+        *TOKEN.lock().await = token_infos.access_token.clone();
+        *EXPIRES_IN.lock().await = token_infos.expires_in;
+        *TOKEN_TYPE.lock().await = token_infos.token_type.clone();
+
+        Ok(())
     }
 
-    pub async fn query_game_by_name(name: String) -> () {}
+    #[derive(Debug, Deserialize, Clone)]
+    pub struct IGDBGameSearchResponseData {
+        found: Vec<IGDBGameBasic>,
+    }
+
+    #[derive(Debug, Deserialize, Clone)]
+    pub struct IGDBGameBasic {
+        id: u32,
+        name: String,
+        platforms: Vec<IGDBPlatformBasic>,
+    }
+
+    #[derive(Debug, Deserialize, Clone)]
+    pub struct IGDBPlatformBasic {
+        id: u32,
+        name: String,
+    }
+
+    /// Pushes a query to the IGDB API
+    /// 
+    /// Returns 
+    pub async fn query_game_by_name(game_name: String) -> Result<IGDBGameSearchResponseData, Box<dyn std::error::Error>> {
+        let client = reqwest::Client::new();
+        let client_id: String = CLIENT_ID.lock().await.clone();
+        let token: String = format!("{} {}", TOKEN_TYPE.lock().await.clone(), TOKEN.lock().await.clone());
+        let response = client.post(endpoints::search::SEARCH_GAME)
+            .header("Client-ID", &client_id)
+            .header("Authorization", &token)
+            .body(format!("search {};\nfields name,platforms.name", game_name))
+            .send()
+            .await?;
+        let parsed_response = response.json::<IGDBGameSearchResponseData>().await?;
+        Ok(parsed_response)
+    }
 }
