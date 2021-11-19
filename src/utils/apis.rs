@@ -2,8 +2,6 @@
 ///
 /// The GOG API documentation lives here:
 pub mod igdb {
-    #![allow(unused_variables, dead_code)]
-
     use ron::de::from_reader;
     use serde::{Deserialize, Serialize};
     use serenity::futures::lock::Mutex;
@@ -27,7 +25,7 @@ pub mod igdb {
         pub mod auth {
             /// The URL to call to log into the IGDB API
             /// 
-            /// Method: GET
+            /// Method: POST
             /// 
             /// #### Parameters (all REQUIRED):
             ///
@@ -50,12 +48,12 @@ pub mod igdb {
         }
     }
 
-    #[derive(Debug, Deserialize, Clone)]
+    #[derive(Debug, Deserialize, Serialize, Clone)]
     /// Data read from your igdb.ron file
     pub struct IGDBSecret {
         client_id: String,
         client_secret: String,
-        #[serde(skip)]
+        #[serde(skip_deserializing)]
         grant_type: String,
     }
 
@@ -82,7 +80,7 @@ pub mod igdb {
     /// Also stores your client id (not client secret), in memory for quick access.
     /// 
     /// See data/dummy_igdb.ron for an example.
-    pub async fn read_secrets_from_file() -> Result<IGDBSecret, Box<dyn std::error::Error>> {
+    async fn read_secrets_from_file() -> Result<IGDBSecret, Box<dyn std::error::Error>> {
         let path: PathBuf = PathBuf::from("data/igdb.ron");
         let file: File = File::open(path).expect("Cannot open file data/igdb.ron");
         
@@ -93,10 +91,12 @@ pub mod igdb {
     }
 
     /// Returns a token
-    pub async fn log_into_igdb() -> Result<(), Box<dyn std::error::Error>> {
+    async fn log_into_igdb() -> Result<(), Box<dyn std::error::Error>> {
         // Do the reqwest
         let client: reqwest::Client = reqwest::Client::new();
-        let response = client.get(endpoints::auth::URL)
+        let login_data: IGDBSecret = read_secrets_from_file().await?;
+        let response = client.post(endpoints::auth::URL)
+            .json(&login_data)
             .send()
             .await?; // Returns a reqwest error if something bad happens
         // Parse the response JSON into a plain old structure
