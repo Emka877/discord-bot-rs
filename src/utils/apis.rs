@@ -6,6 +6,7 @@ pub mod igdb {
     use serde::{Deserialize, Serialize};
     use serenity::futures::lock::{Mutex, MutexGuard};
     use std::{fs::File, path::PathBuf};
+    use std::fmt::Formatter;
     use lazy_static::lazy_static;
     use chrono::{DateTime, Utc};
     use chrono_tz::{Tz, Europe::Brussels};
@@ -86,8 +87,8 @@ pub mod igdb {
     async fn read_secrets_from_file() -> Result<IGDBSecret, Box<dyn std::error::Error>> {
         let path: PathBuf = PathBuf::from("data/igdb.ron");
         let file: File = File::open(path).expect("Cannot open file data/igdb.ron");
-        
-        let read: IGDBSecret = from_reader(file)?;
+        let mut read: IGDBSecret = from_reader(file).expect("Cannot read the data/igdb.ron file!");
+        read.grant_type = "client_credentials".to_owned();
         *CLIENT_ID.lock().await = read.client_id.clone();
 
         Ok(read)
@@ -137,8 +138,29 @@ pub mod igdb {
     }
 
     #[derive(Debug, Deserialize, Clone)]
+    #[serde(transparent)]
     pub struct IGDBGameSearchResponseData {
         found: Vec<IGDBGameBasic>,
+    }
+
+    impl std::fmt::Display for IGDBGameSearchResponseData {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            let mut fmted: String = "J'ai trouvé ça par rapport à votre recherche:\n\n".to_owned();
+
+            for game in self.found.iter() {
+                fmted = format!("{}Nom: {}\n", fmted, game.name);
+                fmted = format!("{}Plateformes:\n", fmted);
+
+                for platform in game.platforms.iter() {
+                    fmted = format!("{}{},", fmted, platform.name);
+                }
+
+                // Finally
+                fmted.push_str("\n\n");
+            }
+
+            write!(f, "{}", fmted)
+        }
     }
 
     #[derive(Debug, Deserialize, Clone)]
@@ -156,8 +178,8 @@ pub mod igdb {
 
     /// Pushes a query to the IGDB API
     /// 
-    /// Returns 
-    pub async fn query_game_by_name(game_name: String) -> Result<IGDBGameSearchResponseData, Box<dyn std::error::Error>> {
+    /// Returns an IGDBGameSearchResponseData response object, or an error in case of fault.
+    pub async fn query_game_by_name(game_name: String) -> Result<IGDBGameSearchResponseData, reqwest::Error> {
         // Make it a macro?
         ensure_logged_in().await;
 
@@ -167,10 +189,10 @@ pub mod igdb {
         let response = client.post(endpoints::search::SEARCH_GAME)
             .header("Client-ID", &client_id)
             .header("Authorization", &token)
-            .body(format!("search {};\nfields name,platforms.name", game_name))
+            .body(format!("search \"{}\";\nfields name,platforms.name;", game_name))
             .send()
             .await?;
-        let parsed_response = response.json::<IGDBGameSearchResponseData>().await?;
+        let parsed_response: IGDBGameSearchResponseData = response.json::<IGDBGameSearchResponseData>().await?;
         Ok(parsed_response)
     }
 }

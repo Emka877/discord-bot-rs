@@ -27,7 +27,7 @@ pub struct Helpers;
 pub struct Fun;
 
 #[group]
-#[commands(version, move_message_manually, not_a_bot)]
+#[commands(version, move_message_manually, not_a_bot, search)]
 pub struct Utilities;
 
 #[group]

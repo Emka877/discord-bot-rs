@@ -1,5 +1,5 @@
 mod roller;
-mod apis;
+pub mod apis;
 pub mod bot_reply;
 pub mod shortcuts;
 

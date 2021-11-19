@@ -13,6 +13,8 @@ use std::fs;
 use crate::utils::shortcuts::send_or_discord_err;
 use crate::{constants::channels::ERRORS, datastructs::SanitizedMessage};
 use crate::constants::channels::INFRARED;
+use crate::utils::apis::igdb::query_game_by_name;
+use crate::utils::igdb::IGDBGameSearchResponseData;
 
 #[command]
 pub async fn version(ctx: &Context, msg: &Message) -> CommandResult {
@@ -93,6 +95,23 @@ pub async fn not_a_bot(ctx: &Context, msg: &Message) -> CommandResult {
             }
             let _ = msg.reply_mention(&ctx.http, "You are now confirmed.").await;
         }
+    }
+
+    Ok(())
+}
+
+#[command]
+pub async fn search(ctx: &Context, msg: &Message) -> CommandResult {
+    let sani: SanitizedMessage = msg.into();
+    let game_name: String = sani.args_single_line;
+    let response: Result<IGDBGameSearchResponseData, reqwest::Error> =
+        query_game_by_name(game_name).await;
+
+    if response.is_ok() {
+        let res_data: IGDBGameSearchResponseData = response.unwrap();
+        let _ = msg.reply_mention(&ctx.http, res_data.to_string()).await;
+    } else {
+        eprintln!("There was an issue searching for an IGDB game: {}", response.unwrap_err());
     }
 
     Ok(())
