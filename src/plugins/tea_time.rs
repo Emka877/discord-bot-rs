@@ -31,8 +31,8 @@ pub async fn tea_time_announcer(ctx: Arc<Context>) -> () {
             }
             
             // Tea time 16h and 22h
-            if (utc_plus_2.hour() == 16 && utc_plus_2.minute() < 1 && utc_plus_2.second() < 58)
-                || (utc_plus_2.hour() == 22 && utc_plus_2.minute() < 1 && utc_plus_2.second() < 58)
+            if (utc_plus_2.hour() == 16 && utc_plus_2.minute() <= 1)
+                || (utc_plus_2.hour() == 22 && utc_plus_2.minute() <= 1)
             {
                 if let Err(why) = ChannelId(ZIGGURAT)
                     .send_message(&ctx, |m| {
@@ -45,21 +45,6 @@ pub async fn tea_time_announcer(ctx: Arc<Context>) -> () {
                     eprintln!("{}", why);
                 }
             }
-
-            // Midnight
-            // if utc_plus_2.hour() == 0 && utc_plus_2.minute() < 1 && utc_plus_2.second() < 58 {
-            //     let pick: Vec<&str> = vec![
-            //         "IL EST MINUIIIIIIIIT ET TOUUUUUUUUUUT VA BIEEEEEEEEEEEN",
-            //         "ON EST AUJOURD'HUI",
-            //     ];
-            //     let picked: &str = pick.choose(&mut thread_rng()).expect("oops").clone();
-            //     if let Err(why) = ChannelId(ZIGGURAT)
-            //         .send_message(&ctx, |m| m.content(picked))
-            //         .await
-            //     {
-            //         eprintln!("{}", why);
-            //     }
-            // }
         }
     });
 }
