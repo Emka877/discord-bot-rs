@@ -31,8 +31,8 @@ pub async fn tea_time_announcer(ctx: Arc<Context>) -> () {
             }
             
             // Tea time 16h and 22h
-            if (utc_plus_2.hour() == 16 && utc_plus_2.minute() <= 1)
-                || (utc_plus_2.hour() == 22 && utc_plus_2.minute() <= 1)
+            if (utc_plus_2.hour() == 16 && utc_plus_2.minute() < 1)
+                || (utc_plus_2.hour() == 22 && utc_plus_2.minute() < 1)
             {
                 if let Err(why) = ChannelId(ZIGGURAT)
                     .send_message(&ctx, |m| {
