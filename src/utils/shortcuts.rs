@@ -1,10 +1,15 @@
 #![allow(dead_code)]
 
 use serenity::http::CacheHttp;
+use serenity::model::channel::Message;
 use serenity::{model::id::ChannelId, prelude::*, utils::MessageBuilder};
-use serenity::model::id::UserId;
+use serenity::model::id::{UserId, MessageId};
 
 use crate::datastructs::CEmbedData;
+
+pub async fn send_raw(ctx: &Context, target_channel: ChannelId, reply: &mut MessageBuilder) -> Result<Message, serenity::Error> {
+    target_channel.say(&ctx.http, reply.build()).await
+}
 
 pub async fn send(ctx: &Context, target_channel: ChannelId, reply: &mut MessageBuilder) -> () {
     send_or_forward_err(ctx, target_channel, reply).await;
@@ -125,4 +130,13 @@ pub async fn send_private_message_or_console_error(context: &Context, user_id: U
             eprintln!("Cannot send a private message: {}", send_result.to_string());
         }
     }
+}
+
+pub async fn delete_message(context: &Context, channel_id: ChannelId, message_id: MessageId) -> () {
+    let message_object = context
+        .http
+        .get_message(channel_id.into(), message_id.into())
+        .await
+        .unwrap();
+    let _ = message_object.delete(context.http()).await;
 }

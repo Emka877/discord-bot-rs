@@ -164,6 +164,7 @@ pub mod igdb {
     }
 
     #[derive(Debug, Deserialize, Clone)]
+    #[allow(dead_code)]
     pub struct IGDBGameBasic {
         id: u32,
         name: String,
@@ -171,6 +172,7 @@ pub mod igdb {
     }
 
     #[derive(Debug, Deserialize, Clone)]
+    #[allow(dead_code)]
     pub struct IGDBPlatformBasic {
         id: u32,
         name: String,

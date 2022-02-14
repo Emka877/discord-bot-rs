@@ -10,11 +10,13 @@ use serenity::{
 use std::env::current_exe;
 use std::fs;
 
-use crate::utils::shortcuts::send_or_discord_err;
+use crate::plugins::sticky_plugin::send_sticky_and_update_mem;
+use crate::utils::shortcuts::{send_or_discord_err, delete_message};
 use crate::{constants::channels::ERRORS, datastructs::SanitizedMessage};
-use crate::constants::channels::INFRARED;
+use crate::constants::channels::{INFRARED, ZIGGURAT};
 use crate::utils::apis::igdb::query_game_by_name;
 use crate::utils::igdb::IGDBGameSearchResponseData;
+use crate::persistence::mem::{get_sticky_id, self};
 
 #[command]
 pub async fn version(ctx: &Context, msg: &Message) -> CommandResult {
@@ -114,5 +116,30 @@ pub async fn search(ctx: &Context, msg: &Message) -> CommandResult {
         eprintln!("There was an issue searching for an IGDB game: {}", response.unwrap_err());
     }
 
+    Ok(())
+}
+
+#[command]
+#[aliases("sticky")]
+pub async fn set_sticky(ctx: &Context, msg: &Message) -> CommandResult {
+    let sani: SanitizedMessage = msg.into();
+
+    let mut msg_builder = MessageBuilder::new();
+    msg_builder.push_bold("STICKY MESSAGE: ");
+    msg_builder.push(sani.args_single_line.clone());
+    send_sticky_and_update_mem(&ctx, ZIGGURAT.into(), &mut msg_builder).await;
+
+    // Set the STICKY_MESSAGE to the message content
+    mem::set_sticky(sani.args_single_line.clone());
+
+    Ok(())
+}
+
+#[command]
+#[aliases("unsticky")]
+pub async fn clear_sticky(ctx: &Context, _msg: &Message) -> CommandResult {
+    delete_message(&ctx, ZIGGURAT.into(), get_sticky_id()).await;
+    mem::clear_sticky();
+    
     Ok(())
 }

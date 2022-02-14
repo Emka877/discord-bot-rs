@@ -32,12 +32,22 @@ impl EventHandler for DefaultHandler {
 
     #[allow(unused_variables)]
     async fn message(&self, ctx: Context, msg: Message) {
+        // Check if the message mentions the bot
         let being_mentioned: bool = msg.mentions_me(&ctx.clone().http()).await.unwrap_or(false);
+        // Check if message is from self
         let is_self: bool = msg.is_own(&ctx.cache).await;
+        // Sanitize the message
         let sani: SanitizedMessage = msg.clone().into();
+        // Check if a message was sent to one of the scanned channels
         message_announcer::message_announcer(Arc::new(ctx.clone()), msg.clone()).await;
+        
+        if !is_self {
+            // Refresh the sticky message, if any
+            sticky_plugin::refresh_sticky_message(Arc::new(ctx.clone())).await;
+        }
 
         if being_mentioned && !is_self {
+            // Question plugin
             let question: String = sani.args_single_line;
             let reply: String = reply_question(question);
             let _ = msg.reply(&ctx.clone().http(), reply).await;
