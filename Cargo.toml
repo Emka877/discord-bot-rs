@@ -1,6 +1,6 @@
 [package]
 name = "discord_bot_rs"
-version = "1.5.3"
+version = "1.6.0"
 authors = ["Oscuro87"]
 edition = "2018"
 
