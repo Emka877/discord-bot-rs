@@ -41,7 +41,7 @@ pub async fn stocks(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
                     stock_price.name,
                     stock_price.price,
                     // Round the price change to 3 decimal places
-                    format!("{:.3}", stock_price.price_change_percent),
+                    format!("{:.3}", stock_price.regular_market_change_percent),
                     stock_price.rating,
                     epoch_to_date(stock_price.earning_call_date),
                     stock_price.full_exchange_name,
