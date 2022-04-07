@@ -43,7 +43,7 @@ pub async fn stocks(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
                     stock_price.regular_market_change_percent,
                     stock_price.rating,
                     epoch_to_date(stock_price.earning_call_date),
-                    stock_price.exchange,
+                    stock_price.full_exchange_name,
                     stock_price.currency
                 )
             }
