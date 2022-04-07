@@ -32,6 +32,10 @@ pub struct Fun;
 pub struct Utilities;
 
 #[group]
+#[commands(stocks)]
+pub struct Stocks;
+
+#[group]
 pub struct Admin;
 
 #[tokio::main]

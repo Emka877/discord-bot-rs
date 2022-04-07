@@ -3,14 +3,14 @@ use serenity::model::channel::Message;
 use serenity::prelude::*;
 use serenity::framework::standard::macros::command;
 
-use crate::utils::remove_calls::get_stock_price;
+use crate::utils::remote_calls::get_stock_price;
 
 // Create a serenity-rs command to get the stock price of a given stock.
 #[command]
 #[description = "Get the stock price of a given stock."]
 #[usage = "<stock>"]
-#[example = "AAPL"]
-#[aliases("stock")]
+#[example = "$AAPL"]
+#[aliases("stock", "ticker")]
 pub async fn stocks(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     let stock_name: String = args.rest().into();
 
