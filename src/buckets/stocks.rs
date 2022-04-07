@@ -36,11 +36,12 @@ pub async fn stocks(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
         let stock_answer = match stock_price {
             Ok(stock_price) => {
                 format!(
-                    "Stock info for ${}\nName: {}\nCurrent Trade Price: ${}\nToday Price Change %: {}%\nAnalysts Sentiment: {}\nEarning Call Date: {}\nExchange: {}\nCurrency: {}",
+                    "Stock info for ${}\nName: {}\nCurrent Trade Price: ${}\nToday Price Change %: {}\nAnalysts Sentiment: {}\nEarning Call Date: {}\nExchange: {}\nCurrency: {}",
                     stock_price.ticker,
                     stock_price.name,
                     stock_price.price,
-                    stock_price.regular_market_change_percent,
+                    // Round the price change to 3 decimal places
+                    format!("{:.3}", stock_price.price_change_percent),
                     stock_price.rating,
                     epoch_to_date(stock_price.earning_call_date),
                     stock_price.full_exchange_name,
