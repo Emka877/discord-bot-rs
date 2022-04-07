@@ -3,7 +3,7 @@ use serenity::model::channel::Message;
 use serenity::prelude::*;
 use serenity::framework::standard::macros::command;
 
-use crate::utils::remoteCalls::get_stock_price;
+use crate::utils::remove_calls::get_stock_price;
 
 // Create a serenity-rs command to get the stock price of a given stock.
 #[command]
