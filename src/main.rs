@@ -60,7 +60,8 @@ async fn main() {
         .group(&HELPERS_GROUP)
         .group(&FUN_GROUP)
         .group(&UTILITIES_GROUP)
-        .group(&ADMIN_GROUP);
+        .group(&ADMIN_GROUP)
+        .group(&STOCKS_GROUP);
 
     let handler: DefaultHandler = DefaultHandler::new();
 
