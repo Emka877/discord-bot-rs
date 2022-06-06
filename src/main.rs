@@ -1,6 +1,6 @@
-use serenity::client::bridge::gateway::GatewayIntents;
 use serenity::framework::standard::StandardFramework;
 use serenity::model::id::UserId;
+use serenity::prelude::GatewayIntents;
 use serenity::{client::Client, framework::standard::macros::group};
 use std::collections::{hash_map::RandomState, HashSet};
 
@@ -65,10 +65,9 @@ async fn main() {
 
     let handler: DefaultHandler = DefaultHandler::new();
 
-    let mut client = Client::builder(&infos.token)
+    let mut client = Client::builder(&infos.token, GatewayIntents::all())
         .event_handler(handler)
         .framework(framework)
-        .intents(GatewayIntents::all())
         .await
         .expect("Error creating client");
 

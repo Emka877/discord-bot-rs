@@ -92,7 +92,7 @@ pub async fn not_a_bot(ctx: &Context, msg: &Message) -> CommandResult {
         if is_infrared {
             let _ = msg.reply_mention(&ctx.http, "You're already a confirmed member, congratulations.").await;
         } else {
-            if let Err(role_error) = &ctx.http.add_member_role(guild_id.into(), user.id.into(), infrared_role_id.into()).await {
+            if let Err(role_error) = &ctx.http.add_member_role(guild_id.into(), user.id.into(), infrared_role_id.into(), Some("New member correctly input the code")).await {
                 eprintln!("Cannot assign role to user: {}", role_error.to_string());
             }
             let _ = msg.reply_mention(&ctx.http, "You are now confirmed.").await;

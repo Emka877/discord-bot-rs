@@ -25,7 +25,7 @@ impl EventHandler for DefaultHandler {
         weather::task_thunderstorm_sentry(Arc::new(ctx.clone())).await;
     }
 
-    async fn guild_member_addition(&self, ctx: Context, _guild_id: GuildId, new_member: Member) {
+    async fn guild_member_addition(&self, ctx: Context, new_member: Member) {
         println!("A new client connects the server, sending instructions...");
         join_message::send_join_message(Arc::new(ctx.clone()), new_member).await;
     }
@@ -35,7 +35,7 @@ impl EventHandler for DefaultHandler {
         // Check if the message mentions the bot
         let being_mentioned: bool = msg.mentions_me(&ctx.clone().http()).await.unwrap_or(false);
         // Check if message is from self
-        let is_self: bool = msg.is_own(&ctx.cache).await;
+        let is_self: bool = msg.is_own(&ctx.cache);
         // Sanitize the message
         let sani: SanitizedMessage = msg.clone().into();
         // Check if a message was sent to one of the scanned channels
