@@ -45,6 +45,7 @@ pub async fn links(ctx: &Context, msg: &Message) -> CommandResult {
             "Control",
             "https://www.youtube.com/playlist?list=PLqxDFE_3dqg5mXLKPNXrFhcUOcmO9zJ_x"
         )
+        .push_line("")
         .push_named_link(
             "Death's Door",
             "https://www.youtube.com/playlist?list=PLqxDFE_3dqg7MrOIo4tTlPIzcQaFOqvsc"
