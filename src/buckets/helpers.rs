@@ -40,6 +40,11 @@ pub async fn links(ctx: &Context, msg: &Message) -> CommandResult {
         .push_line("- Emka: https://www.youtube.com/channel/UChUWneEkjNMqLNpp-vQ2DRQ")
         .push_line("")
         .push_underline_line("Playlists Youtube Grey Monster:")
+        .push_line("")
+        .push_named_link(
+            "Control",
+            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg5mXLKPNXrFhcUOcmO9zJ_x"
+        )
         .push_named_link(
             "Death's Door",
             "https://www.youtube.com/playlist?list=PLqxDFE_3dqg7MrOIo4tTlPIzcQaFOqvsc"
@@ -58,11 +63,6 @@ pub async fn links(ctx: &Context, msg: &Message) -> CommandResult {
         .push_named_link(
             "Sekiro", 
             "https://www.youtube.com/playlist?list=PLqxDFE_3dqg4IV5srX1vYiL-Wxcs3sCKy"
-        )
-        .push_line("")
-        .push_named_link(
-            "Control",
-            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg5mXLKPNXrFhcUOcmO9zJ_x"
         );
 
     let mut embed_data = CEmbedData::default();
