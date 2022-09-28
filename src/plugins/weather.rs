@@ -9,7 +9,7 @@ const GENERIC_ERROR_MESSAGE: &str = "Une erreur est survenue, veuillez engueuler
 ///
 /// Install directly into an handler.
 pub async fn task_thunderstorm_sentry(ctx: Arc<Context>) -> () {
-    let check_weather_interval_ms: u64 = 60 * 10 * 1000; // 10 minutes
+    let check_weather_interval_ms: u64 = 10 * 60 * 1000; // 10 minutes
     let msg_target_channels: Vec<u64> = vec![
         channels::ZIGGURAT
     ];
