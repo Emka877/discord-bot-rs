@@ -1,0 +1,27 @@
+name: Trigger Jenkins
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+    
+  # workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Jenkins Job Trigger
+      # You may pin to the exact commit or the version.
+      # uses: estherk0/jenkins-trigger@70ee28b6020e5894782308052ae4bba253256823
+        uses: estherk0/jenkins-trigger@1.0
+        with:
+          url: https://jenkins.oscur.io
+          user_name: emka87
+          api_token: 113667b35c352469047c24ef851ec492e4
+          job_name: discord-bot
+          # Job parameter in JSON format. ex) {"param1":"value1"} 
+          # parameter: {} # optional
+          wait: true
+          timeout: 600
