@@ -20,7 +20,7 @@ impl DefaultHandler {
 #[async_trait]
 impl EventHandler for DefaultHandler {
     async fn cache_ready(&self, ctx: Context, _guilds: Vec<GuildId>) {
-        // Tea time and midnight announcer
+        // Tea time announcer
         tea_time::tea_time_announcer(Arc::new(ctx.clone())).await;
         weather::task_thunderstorm_sentry(Arc::new(ctx.clone())).await;
     }
@@ -40,7 +40,7 @@ impl EventHandler for DefaultHandler {
         let sani: SanitizedMessage = msg.clone().into();
         // Check if a message was sent to one of the scanned channels
         message_announcer::message_announcer(Arc::new(ctx.clone()), msg.clone()).await;
-        
+
         if !is_self {
             // Refresh the sticky message, if any
             sticky_plugin::refresh_sticky_message(Arc::new(ctx.clone())).await;

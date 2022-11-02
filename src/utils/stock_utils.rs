@@ -1,4 +1,4 @@
-use serde::{Deserialize};
+use serde::Deserialize;
 use serde_json::Value;
 
 #[derive(Default, Debug, Clone, PartialEq, Deserialize)]
@@ -112,7 +112,11 @@ pub struct StockInfo {
  */
 pub async fn get_stock_price(ticker: String) -> Result<StockInfo, String> {
     // Perform the request using reqwest
-    let response = reqwest::get(&format!("https://query1.finance.yahoo.com/v7/finance/quote?symbols={}", ticker)).await;
+    let response = reqwest::get(&format!(
+        "https://query1.finance.yahoo.com/v7/finance/quote?symbols={}",
+        ticker
+    ))
+    .await;
     // Check if the request was successful
     if response.is_err() {
         return Err("Could not get the stock price.".to_string());
@@ -134,7 +138,7 @@ pub async fn get_stock_price(ticker: String) -> Result<StockInfo, String> {
     let response_body = response_body.unwrap();
 
     println!("{:#}", response_body);
-    
+
     // Parse the response body into a StockInfo struct
     let stock_info: Root = serde_json::from_str(&response_body).unwrap();
 

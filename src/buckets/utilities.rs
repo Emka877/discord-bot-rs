@@ -10,13 +10,13 @@ use serenity::{
 use std::env::current_exe;
 use std::fs;
 
-use crate::plugins::sticky_plugin::send_sticky_and_update_mem;
-use crate::utils::shortcuts::{send_or_discord_err, delete_message};
-use crate::{constants::channels::ERRORS, datastructs::SanitizedMessage};
 use crate::constants::channels::{INFRARED, ZIGGURAT};
+use crate::persistence::mem::{self, get_sticky_id};
+use crate::plugins::sticky_plugin::send_sticky_and_update_mem;
 use crate::utils::apis::igdb::query_game_by_name;
 use crate::utils::igdb::IGDBGameSearchResponseData;
-use crate::persistence::mem::{get_sticky_id, self};
+use crate::utils::shortcuts::{delete_message, send_or_discord_err};
+use crate::{constants::channels::ERRORS, datastructs::SanitizedMessage};
 
 #[command]
 pub async fn version(ctx: &Context, msg: &Message) -> CommandResult {
@@ -90,9 +90,23 @@ pub async fn not_a_bot(ctx: &Context, msg: &Message) -> CommandResult {
 
     if let Ok(is_infrared) = user.has_role(&ctx.http, guild_id, infrared_role_id).await {
         if is_infrared {
-            let _ = msg.reply_mention(&ctx.http, "You're already a confirmed member, congratulations.").await;
+            let _ = msg
+                .reply_mention(
+                    &ctx.http,
+                    "You're already a confirmed member, congratulations.",
+                )
+                .await;
         } else {
-            if let Err(role_error) = &ctx.http.add_member_role(guild_id.into(), user.id.into(), infrared_role_id.into(), Some("New member correctly input the code")).await {
+            if let Err(role_error) = &ctx
+                .http
+                .add_member_role(
+                    guild_id.into(),
+                    user.id.into(),
+                    infrared_role_id.into(),
+                    Some("New member correctly input the code"),
+                )
+                .await
+            {
                 eprintln!("Cannot assign role to user: {}", role_error.to_string());
             }
             let _ = msg.reply_mention(&ctx.http, "You are now confirmed.").await;
@@ -113,7 +127,10 @@ pub async fn search(ctx: &Context, msg: &Message) -> CommandResult {
         let res_data: IGDBGameSearchResponseData = response.unwrap();
         let _ = msg.reply_mention(&ctx.http, res_data.to_string()).await;
     } else {
-        eprintln!("There was an issue searching for an IGDB game: {}", response.unwrap_err());
+        eprintln!(
+            "There was an issue searching for an IGDB game: {}",
+            response.unwrap_err()
+        );
     }
 
     Ok(())
@@ -140,6 +157,6 @@ pub async fn set_sticky(ctx: &Context, msg: &Message) -> CommandResult {
 pub async fn clear_sticky(ctx: &Context, _msg: &Message) -> CommandResult {
     delete_message(&ctx, ZIGGURAT.into(), get_sticky_id()).await;
     mem::clear_sticky();
-    
+
     Ok(())
 }

@@ -8,9 +8,9 @@ mod buckets;
 mod constants;
 mod datastructs;
 mod handlers;
+mod persistence;
 mod plugins;
 mod utils;
-mod persistence;
 
 use datastructs::bot_info::{read_bot_infos, BotInfo};
 
@@ -28,7 +28,14 @@ pub struct Helpers;
 pub struct Fun;
 
 #[group]
-#[commands(version, move_message_manually, not_a_bot, search, set_sticky, clear_sticky)]
+#[commands(
+    version,
+    move_message_manually,
+    not_a_bot,
+    search,
+    set_sticky,
+    clear_sticky
+)]
 pub struct Utilities;
 
 #[group]

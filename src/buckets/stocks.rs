@@ -1,9 +1,9 @@
+use serenity::framework::standard::macros::command;
 use serenity::framework::standard::{Args, CommandResult};
 use serenity::model::channel::Message;
 use serenity::prelude::*;
-use serenity::framework::standard::macros::command;
 
-use crate::utils::stock_utils::{get_stock_price, epoch_to_date};
+use crate::utils::stock_utils::{epoch_to_date, get_stock_price};
 
 // Create a serenity-rs command to get the stock price of a given stock.
 #[command]
@@ -20,16 +20,19 @@ pub async fn stocks(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     }
 
     if stock_name.is_empty() {
-        msg.channel_id.say(&ctx.http, "Please provide a stock name.").await?;
+        msg.channel_id
+            .say(&ctx.http, "Please provide a stock name.")
+            .await?;
         return Ok(());
     }
 
     let stock_price = get_stock_price(stock_name.clone()).await;
-    
 
     // If stock_price is an error, return the error message
     if stock_price.is_err() {
-        msg.channel_id.say(&ctx.http, &stock_price.unwrap_err()).await?;
+        msg.channel_id
+            .say(&ctx.http, &stock_price.unwrap_err())
+            .await?;
         return Ok(());
     } else {
         // Transform stock_price into a structured string (each field on a new line), with the following format: field: value

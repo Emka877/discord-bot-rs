@@ -1,20 +1,17 @@
+use owm_rs::prelude::get_weather_by_city;
 use std::sync::Arc;
 
 use serenity::{
     client::Context,
     framework::standard::{macros::command, CommandResult},
     http::CacheHttp,
-    model::{
-        channel::Message,
-        id::ChannelId,
-    },
+    model::{channel::Message, id::ChannelId},
     utils::{EmbedMessageBuilding, MessageBuilder},
 };
 
-use crate::plugins::weather::{fetch_weather_for_city, kelvin_to_celsius};
 use crate::datastructs::SanitizedMessage;
+use crate::plugins::weather::read_openweatherapi_creds;
 use crate::{constants::*, datastructs::CEmbedData, utils::shortcuts::send_embed_or_discord_error};
-use crate::datastructs::owa_data::OpenWeatherApiData;
 
 #[command]
 #[owners_only]
@@ -43,12 +40,12 @@ pub async fn links(ctx: &Context, msg: &Message) -> CommandResult {
         .push_line("")
         .push_named_link(
             "Control",
-            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg5mXLKPNXrFhcUOcmO9zJ_x"
+            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg5mXLKPNXrFhcUOcmO9zJ_x",
         )
         .push_line("")
         .push_named_link(
             "Death's Door",
-            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg7MrOIo4tTlPIzcQaFOqvsc"
+            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg7MrOIo4tTlPIzcQaFOqvsc",
         )
         .push_line("")
         .push_named_link(
@@ -62,8 +59,8 @@ pub async fn links(ctx: &Context, msg: &Message) -> CommandResult {
         )
         .push_line("")
         .push_named_link(
-            "Sekiro", 
-            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg4IV5srX1vYiL-Wxcs3sCKy"
+            "Sekiro",
+            "https://www.youtube.com/playlist?list=PLqxDFE_3dqg4IV5srX1vYiL-Wxcs3sCKy",
         );
 
     let mut embed_data = CEmbedData::default();
@@ -88,7 +85,8 @@ pub async fn weather(ctx: &Context, msg: &Message) -> CommandResult {
         city = san_msg.args_single_line;
     }
 
-    let weather_result: Result<OpenWeatherApiData, String> = fetch_weather_for_city(city).await;
+    let creds = read_openweatherapi_creds();
+    let weather_result = get_weather_by_city(city, creds.token.clone()).await;
     match weather_result {
         Ok(weather) => {
             if weather.weather.len() > 0 {
@@ -99,8 +97,8 @@ pub async fn weather(ctx: &Context, msg: &Message) -> CommandResult {
                     .push_line(format!("Ciel: {}.", weather.weather[0].description))
                     .push_line(format!(
                         "Il fait {:.1}°C ({:.1}°C ressenti).",
-                        kelvin_to_celsius(weather.main.temp),
-                        kelvin_to_celsius(weather.main.feels_like)
+                        owm_rs::owm_utils::convert::kelvin_to_celsius(weather.main.temp),
+                        owm_rs::owm_utils::convert::kelvin_to_celsius(weather.main.feels_like)
                     ))
                     .push_line(format!("Humidité {}%.", weather.main.humidity))
                     .build();

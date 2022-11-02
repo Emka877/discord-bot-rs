@@ -53,7 +53,7 @@ pub struct DtData(i32);
 
 #[derive(Deserialize, Clone)]
 pub struct SystemData {
-    #[serde(rename="type")]
+    #[serde(rename = "type")]
     pub sys_type: i32, // Rename reserved Rust keyword. type -> sys_type.
     pub id: i32,
     pub country: String,

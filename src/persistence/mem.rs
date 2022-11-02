@@ -1,6 +1,6 @@
-use std::sync::Mutex;
 use lazy_static::lazy_static;
 use serenity::model::id::MessageId;
+use std::sync::Mutex;
 
 lazy_static! {
     pub static ref STICKY_MESSAGE: Mutex<Option<String>> = Mutex::new(None);

@@ -2,14 +2,14 @@
 ///
 /// The GOG API documentation lives here:
 pub mod igdb {
+    use chrono::{DateTime, Utc};
+    use chrono_tz::{Europe::Brussels, Tz};
+    use lazy_static::lazy_static;
     use ron::de::from_reader;
     use serde::{Deserialize, Serialize};
     use serenity::futures::lock::{Mutex, MutexGuard};
-    use std::{fs::File, path::PathBuf};
     use std::fmt::Formatter;
-    use lazy_static::lazy_static;
-    use chrono::{DateTime, Utc};
-    use chrono_tz::{Tz, Europe::Brussels};
+    use std::{fs::File, path::PathBuf};
 
     // Storage for the login token
     lazy_static!(
@@ -28,25 +28,25 @@ pub mod igdb {
         /// Authentication routes
         pub mod auth {
             /// The URL to call to log into the IGDB API
-            /// 
+            ///
             /// Method: POST
-            /// 
+            ///
             /// #### Parameters (all REQUIRED):
             ///
-            /// 
+            ///
             /// client_id (str)
-            /// 
+            ///
             /// client_secret (str)
-            /// 
+            ///
             /// grant_type (str) and must be set to "client_credentials"
             pub const URL: &'static str = "https://id.twitch.tv/oauth2/token";
         }
 
         pub mod search {
             /// IGDB Search API
-            /// 
+            ///
             /// Method: POST
-            /// 
+            ///
             /// Parameters: See https://api-docs.igdb.com/?java#search
             pub const SEARCH_GAME: &'static str = "https://api.igdb.com/v4/games/";
         }
@@ -80,9 +80,9 @@ pub mod igdb {
     }
 
     /// Reads your IGDB secrets from the data/igdb.ron file.
-    /// 
+    ///
     /// Also stores your client id (not client secret), in memory for quick access.
-    /// 
+    ///
     /// See data/dummy_igdb.ron for an example.
     async fn read_secrets_from_file() -> Result<IGDBSecret, Box<dyn std::error::Error>> {
         let path: PathBuf = PathBuf::from("data/igdb.ron");
@@ -99,11 +99,12 @@ pub mod igdb {
         // Do the reqwest
         let client: reqwest::Client = reqwest::Client::new();
         let login_data: IGDBSecret = read_secrets_from_file().await?;
-        let response = client.post(endpoints::auth::URL)
+        let response = client
+            .post(endpoints::auth::URL)
             .json(&login_data)
             .send()
             .await?; // Returns a reqwest error if something bad happens
-        // Parse the response JSON into a plain old structure
+                     // Parse the response JSON into a plain old structure
         let token_infos: IGDBTokenInfo = response.json::<IGDBTokenInfo>().await?;
         // Store the token infos in memory
         // Might consider simply write these to a file, but then it would be readable by anyone (encrypt?)
@@ -179,22 +180,33 @@ pub mod igdb {
     }
 
     /// Pushes a query to the IGDB API
-    /// 
+    ///
     /// Returns an IGDBGameSearchResponseData response object, or an error in case of fault.
-    pub async fn query_game_by_name(game_name: String) -> Result<IGDBGameSearchResponseData, reqwest::Error> {
+    pub async fn query_game_by_name(
+        game_name: String,
+    ) -> Result<IGDBGameSearchResponseData, reqwest::Error> {
         // Make it a macro?
         ensure_logged_in().await;
 
         let client = reqwest::Client::new();
         let client_id: String = CLIENT_ID.lock().await.clone();
-        let token: String = format!("{} {}", TOKEN_TYPE.lock().await.clone(), TOKEN.lock().await.clone());
-        let response = client.post(endpoints::search::SEARCH_GAME)
+        let token: String = format!(
+            "{} {}",
+            TOKEN_TYPE.lock().await.clone(),
+            TOKEN.lock().await.clone()
+        );
+        let response = client
+            .post(endpoints::search::SEARCH_GAME)
             .header("Client-ID", &client_id)
             .header("Authorization", &token)
-            .body(format!("search \"{}\";\nfields name,platforms.name;", game_name))
+            .body(format!(
+                "search \"{}\";\nfields name,platforms.name;",
+                game_name
+            ))
             .send()
             .await?;
-        let parsed_response: IGDBGameSearchResponseData = response.json::<IGDBGameSearchResponseData>().await?;
+        let parsed_response: IGDBGameSearchResponseData =
+            response.json::<IGDBGameSearchResponseData>().await?;
         Ok(parsed_response)
     }
 }

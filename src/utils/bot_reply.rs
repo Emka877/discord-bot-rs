@@ -28,7 +28,7 @@ pub fn reply_question(_question: String) -> String {
         "https://tenor.com/xnba.gif".into(), // BOOM
         "https://tenor.com/InWt.gif".into(), // Whatever
     ];
-    
+
     answers
         .choose(&mut rand::thread_rng())
         .expect("Problem trying to pick a random vector entry (1)")

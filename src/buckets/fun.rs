@@ -2,16 +2,13 @@ use rand::prelude::IteratorRandom;
 use regex::Regex;
 use serenity::{
     client::Context,
-    framework::standard::{
-        macros::command,
-        Args, CommandResult,
-    },
+    framework::standard::{macros::command, Args, CommandResult},
     model::channel::Message,
 };
 
-use crate::utils::Roller;
-use crate::utils::bot_reply::reply_question;
 use crate::datastructs::SanitizedMessage;
+use crate::utils::bot_reply::reply_question;
+use crate::utils::Roller;
 
 #[command]
 #[min_args(1)]
@@ -39,7 +36,7 @@ pub async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     roll_params = roll_params.replace::<&str>(" ", "");
 
     // Regex
-    let re = Regex::new(r"(?P<dices>\d*)(?:d|D)(?P<faces>\d+)(?P<mod>-?\+?\d+)?").unwrap();
+    let re = Regex::new(r"(?P<dices>\d*)[dD](?P<faces>\d+)(?P<mod>-?\+?\d+)?").unwrap();
     let caps = re.captures(roll_params.as_str()).unwrap();
 
     let dices_text = caps.name("dices").map_or("1", |x| x.as_str());
@@ -63,7 +60,9 @@ pub async fn pick(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     let content = args.message().to_string();
     let split = content.split(separator);
 
-    let pick = split.choose(&mut rand::thread_rng()).expect("Cannot pick any option in picker!");
+    let pick = split
+        .choose(&mut rand::thread_rng())
+        .expect("Cannot pick any option in picker!");
     let _ = msg.reply(&ctx.http, format!("{}", pick)).await;
 
     Ok(())

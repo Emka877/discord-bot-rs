@@ -2,12 +2,16 @@
 
 use serenity::http::CacheHttp;
 use serenity::model::channel::Message;
+use serenity::model::id::{MessageId, UserId};
 use serenity::{model::id::ChannelId, prelude::*, utils::MessageBuilder};
-use serenity::model::id::{UserId, MessageId};
 
 use crate::datastructs::CEmbedData;
 
-pub async fn send_raw(ctx: &Context, target_channel: ChannelId, reply: &mut MessageBuilder) -> Result<Message, serenity::Error> {
+pub async fn send_raw(
+    ctx: &Context,
+    target_channel: ChannelId,
+    reply: &mut MessageBuilder,
+) -> Result<Message, serenity::Error> {
     target_channel.say(&ctx.http, reply.build()).await
 }
 
@@ -115,18 +119,28 @@ pub async fn send_embed_or_forward_error(
     None
 }
 
-pub async fn send_private_message_or_console_error(context: &Context, user_id: UserId, message_content: &mut MessageBuilder) -> () {
+pub async fn send_private_message_or_console_error(
+    context: &Context,
+    user_id: UserId,
+    message_content: &mut MessageBuilder,
+) -> () {
     let private_channel = user_id.create_dm_channel(&context.http).await;
 
     if private_channel.is_err() {
-        eprintln!("Cannot create private channel: {}", private_channel.unwrap().to_string());
+        eprintln!(
+            "Cannot create private channel: {}",
+            private_channel.unwrap().to_string()
+        );
     } else {
         // Shadowing
         let private_channel = private_channel.unwrap();
-        if let Err(send_result) = private_channel.send_message(&context.http, |m| {
-            m.content(message_content.build());
-            m
-        }).await {
+        if let Err(send_result) = private_channel
+            .send_message(&context.http, |m| {
+                m.content(message_content.build());
+                m
+            })
+            .await
+        {
             eprintln!("Cannot send a private message: {}", send_result.to_string());
         }
     }
