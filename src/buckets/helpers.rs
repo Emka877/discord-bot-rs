@@ -117,7 +117,8 @@ pub async fn weather(ctx: &Context, msg: &Message) -> CommandResult {
         Err(err) => {
             let msg_builder = MessageBuilder::new()
                 .user(msg.author.id)
-                .push_line(format!("Erreur: {}", err))
+                .push_line(format!("Erreur: Ville non trouvée."))
+                .push_line(format!("{}", err))
                 .build();
             let _ = msg.channel_id.say(&ctx, msg_builder).await;
         }
