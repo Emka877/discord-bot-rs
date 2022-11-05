@@ -59,6 +59,7 @@ pub struct StockInfo {
     pub fifty_two_week_high_change_percent: f64,
     pub fifty_two_week_low: f64,
     pub fifty_two_week_high: f64,
+    #[serde(default)]
     pub dividend_date: i64,
     pub exchange: String,
     pub short_name: String,
@@ -77,6 +78,7 @@ pub struct StockInfo {
     pub earnings_timestamp_end: i64,
     pub trailing_annual_dividend_rate: f64,
     #[serde(rename = "trailingPE")]
+    #[serde(default)]
     pub trailing_pe: f64,
     pub trailing_annual_dividend_yield: f64,
     pub eps_trailing_twelve_months: f64,
@@ -97,6 +99,7 @@ pub struct StockInfo {
     pub price_to_book: f64,
     pub source_interval: i64,
     pub exchange_data_delayed_by: i64,
+    #[serde(default)]
     pub page_view_growth_weekly: f64,
     #[serde(rename = "averageAnalystRating")]
     pub rating: String,

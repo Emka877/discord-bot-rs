@@ -5,10 +5,9 @@ use serenity::prelude::*;
 
 use crate::utils::stock_utils::{epoch_to_date, get_stock_price};
 
-// Create a serenity-rs command to get the stock price of a given stock.
 #[command]
-#[description = "Get the stock price of a given stock."]
-#[usage = "<stock>"]
+#[description = "Get the stock price of a given stock ticket."]
+#[usage = "!ticker $[stock ticker]"]
 #[example = "$AAPL"]
 #[aliases("stock", "ticker")]
 pub async fn stocks(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
