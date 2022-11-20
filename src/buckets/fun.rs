@@ -27,11 +27,10 @@ pub async fn eight_ball(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 #[min_args(1)]
-#[allow(unused_assignments)]
 pub async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
-    let mut dices: u32 = 1;
-    let mut faces: u32 = 6;
-    let mut modifier: i32 = 0;
+    let dices: u32;
+    let faces: u32;
+    let modifier: i32;
     let mut roll_params: String = args.message().to_string();
     roll_params = roll_params.replace::<&str>(" ", "");
 

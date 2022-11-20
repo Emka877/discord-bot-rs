@@ -156,7 +156,8 @@ pub async fn get_stock_price(ticker: String) -> Result<StockInfo, String> {
 
 // Function that transforms an epoch timestamp into a human readable date
 pub fn epoch_to_date(epoch: i64) -> String {
-    let date = chrono::NaiveDateTime::from_timestamp(epoch as i64, 0);
+    // let date = chrono::NaiveDateTime::from_timestamp(epoch as i64, 0);
+    let date = chrono::NaiveDateTime::from_timestamp_opt(epoch as i64, 0).expect("Could not read epoch as NaiveDateTime");
     let date_string = date.format("%Y-%m-%d %H:%M:%S").to_string();
     return date_string;
 }
