@@ -18,4 +18,4 @@ reqwest = "0.11.14"
 lazy_static = "1.4.0"
 anyhow = "1.0.68"
 # Custom libraries
-owm-rs = { git = "https://github.com/Oscuro87/owm-rs.git", features = ["utils"] }
+owm-rs = "1.0.7"
