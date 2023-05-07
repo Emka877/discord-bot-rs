@@ -22,9 +22,9 @@ pub async fn tea_time_announcer(ctx: Arc<Context>) -> () {
                 let temperature_celsius: f32 = owm_rs::owm_utils::convert::kelvin_to_celsius(temperature_kelvins);
 
                 beverage = match temperature_celsius {
-                    temp if temp <= 0.0 => "hot lava tea or chocolate".into(),
-                    temp if temp > 0.0 && temp < 21.0 => "tea".into(),
-                    temp if temp >= 21.0 && temp <= 30.0 => "iced tea".into(),
+                    temp if temp <= 0.0 => "lava hot tea or chocolate".into(),
+                    temp if temp > 0.0 && temp < 25.0 => "tea".into(),
+                    temp if temp >= 25.0 && temp <= 30.0 => "iced tea".into(),
                     temp if temp > 30.0 => "super frozen tea".into(),
                     _ => "tea".into(),
                 }
