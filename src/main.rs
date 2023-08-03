@@ -70,6 +70,22 @@ async fn main() {
         .group(&ADMIN_GROUP)
         .group(&STOCKS_GROUP);
 
+    if let Some(error) = persistence::edge::requests::insert_discord_user(String::from("oscuro"), String::from("1234"), String::from("123456789000")).await {
+        println!("EdgeDb Error: {}", error);
+    }
+
+    match persistence::edge::requests::get_discord_user_info(String::from("123456789000")).await {
+        Ok(response) => {
+            if response.is_some() {
+                println!("{:#?}", response.unwrap());
+            }
+        },
+        Err(error) => {
+            println!("{}", error);
+        }
+    }
+
+
     let handler: DefaultHandler = DefaultHandler::new();
 
     let mut client = Client::builder(&infos.token, GatewayIntents::all())
