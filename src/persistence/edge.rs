@@ -1,16 +1,16 @@
 pub mod requests {
     use super::super::edge_models::*;
 
-    pub async fn get_conn() -> anyhow::Result<edgedb_tokio::Client, edgedb_tokio::Error> {
+    async fn get_conn() -> anyhow::Result<edgedb_tokio::Client, edgedb_tokio::Error> {
         edgedb_tokio::create_client().await
     }
 
-    pub async fn insert_discord_user(username: String, discriminator: String, unique_id: String) -> Option<edgedb_tokio::Error> {
+    pub async fn insert_discord_user(username: String, display_name: String, unique_id: String) -> Option<edgedb_tokio::Error> {
         match get_conn().await {
             Ok(conn) => {
                 match conn.execute::<(String, String, String)>("INSERT Discord::User {
-                    uniqueId := <str>$0, username := <str>$1, discriminator := <str>$2
-                }", &(unique_id, username, discriminator)).await {
+                    unique_id := <str>$0, username := <str>$1, display_name := <str>$2
+                }", &(unique_id, username, display_name)).await {
                     Ok(_) => {
                         return None;
                     },
@@ -31,12 +31,12 @@ pub mod requests {
                 let result: Result<Option<User>, edgedb_tokio::Error> = conn.query_single("
                     select Discord::User {
                         username,
-                        discriminator,
-                        uniqueId
+                        unique_id,
+                        display_name
                     }
-                    filter .uniqueId = <str>$0", &(unique_id,)).await;
+                    filter .unique_id = <str>$0", &(unique_id,)).await;
                 match result {
-                    Ok(maybeUser) => Ok(maybeUser),
+                    Ok(maybe_user) => Ok(maybe_user),
                     Err(error) => Err(error),
                 }
             },

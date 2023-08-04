@@ -4,8 +4,8 @@ use edgedb_protocol::model::LocalDatetime;
 #[derive(Queryable, Debug)]
 pub struct User {
     pub username: String,
-    pub discriminator: String,
-    pub uniqueId: String,
+    pub unique_id: String,
+    pub display_name: String,
 }
 
 #[derive(Queryable, Debug)]

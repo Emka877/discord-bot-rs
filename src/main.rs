@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use serenity::framework::standard::StandardFramework;
 use serenity::model::id::UserId;
 use serenity::prelude::GatewayIntents;
@@ -13,10 +14,8 @@ mod plugins;
 mod utils;
 
 use datastructs::bot_info::{read_bot_infos, BotInfo};
-
 use buckets::*;
 use handlers::*;
-#[allow(unused_imports)]
 use plugins::*;
 
 #[group]
@@ -46,6 +45,10 @@ pub struct Stocks;
 #[group]
 pub struct Admin;
 
+#[group]
+#[commands(register)]
+pub struct Account;
+
 #[tokio::main]
 async fn main() {
     let infos: BotInfo = read_bot_infos();
@@ -69,7 +72,8 @@ async fn main() {
         .group(&FUN_GROUP)
         .group(&UTILITIES_GROUP)
         .group(&ADMIN_GROUP)
-        .group(&STOCKS_GROUP);
+        .group(&STOCKS_GROUP)
+        .group(&ACCOUNT_GROUP);
 
     let handler: DefaultHandler = DefaultHandler::new();
 

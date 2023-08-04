@@ -2,17 +2,14 @@ module Discord {
     type User {
         required username: str {
             readonly := true;
+            constraint exclusive;
         }
 
-        required discriminator: str {
-           readonly := true;
-        }
-
-        required uniqueId: str {
+        required unique_id: str {
             readonly := true;
             constraint exclusive;
         }
 
-        constraint exclusive on ((.username ++ .discriminator));
+        required display_name: str;
     }
 }
