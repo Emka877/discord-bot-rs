@@ -183,10 +183,12 @@ pub async fn get_errors_log(ctx: &Context, msg: &Message) -> CommandResult {
                 let logs = logs_opt.unwrap();
                 let mut msg_builder: MessageBuilder = MessageBuilder::new();
                 
+                msg_builder.push_line("");
                 for log in logs.iter() {
-                    msg_builder.push(format!("({} - {} | {}) {}", log.created_local, log.level.clone().unwrap_or(String::from("Unknown")), log.channel_name.clone().unwrap_or(String::from("No channel")), log.log));
-                    let _ = msg.reply_mention(&ctx, msg_builder.build()).await;
+                    msg_builder.push_line(format!("({} - {} | {}) {}", log.created_local, log.level.clone().unwrap_or(String::from("Unknown")), log.channel_name.clone().unwrap_or(String::from("No channel")), log.log));
                 }
+
+                let _ = msg.reply_mention(&ctx, msg_builder.build()).await;
             }
         },
         Err(error) => {

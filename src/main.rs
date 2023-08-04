@@ -80,9 +80,14 @@ async fn main() {
         .expect("Error creating client");
 
     if let Err(why) = client.start().await {
-        println!("An error occurred while running the client: {:?}", why);
+        utils::logging::db_log::log_error(
+            format!("An error occurred while running the client: {:?}", why),
+            String::from("error"),
+            String::from(""),
+            true
+        ).await;
     }
     else {
-        println!("Bot is now running...");
+        println!("Bot is running...");
     }
 }

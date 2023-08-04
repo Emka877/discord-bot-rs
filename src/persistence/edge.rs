@@ -64,4 +64,21 @@ pub mod requests {
             Err(error) => Err(error)
         }
     }
+
+    pub async fn write_error_log(log: String, level: String, channel_name: String) -> anyhow::Result<(), edgedb_tokio::Error> {
+        match get_conn().await {
+            Ok(conn) => {
+                let result = conn.execute("insert Dev::ErrorLog {
+                    log := <str>$0,
+                    level := <str>$1,
+                    channel_name := <str>$2
+                }", &(log, level, channel_name)).await;
+                if result.is_err() {
+                    return Err(result.unwrap_err());
+                }
+                Ok(())
+            }
+            Err(err) => Err(err)
+        }
+    }
 }
