@@ -6,3 +6,4 @@ Cargo.lock
 logs
 /.idea
 .env
+discordbot.service
