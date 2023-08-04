@@ -48,10 +48,10 @@ pub mod requests {
         match get_conn().await {
             Ok(conn) => {
                 let result = conn.query::<ErrorLog, _>("select Dev::ErrorLog {
-                    level,
                     log,
-                    channel_name,
-                    created_local
+                    created_local,
+                    level,
+                    channel_name
                   }
                   order by .created_local desc empty last
                   limit <int32>$0", &(limit,)).await;

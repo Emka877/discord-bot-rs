@@ -11,6 +11,7 @@ use std::env::current_exe;
 use std::fs;
 
 use crate::constants::channels::{INFRARED, ZIGGURAT};
+use crate::persistence;
 use crate::persistence::mem::{self, get_sticky_id};
 use crate::plugins::sticky_plugin::send_sticky_and_update_mem;
 use crate::utils::apis::igdb::query_game_by_name;
@@ -157,6 +158,41 @@ pub async fn set_sticky(ctx: &Context, msg: &Message) -> CommandResult {
 pub async fn clear_sticky(ctx: &Context, _msg: &Message) -> CommandResult {
     delete_message(&ctx, ZIGGURAT.into(), get_sticky_id()).await;
     mem::clear_sticky();
+
+    Ok(())
+}
+
+#[command]
+#[aliases("errorlog")]
+#[aliases("getLastErrors")]
+pub async fn get_errors_log(ctx: &Context, msg: &Message) -> CommandResult {
+    let san: SanitizedMessage = msg.into();
+    let args = san.arguments;
+    let mut limit: i32 = 10;
+    
+    if let Some(lim) = args.get(0) {
+        let parsed_limit = lim.parse::<i32>();
+        if parsed_limit.is_ok() {
+            limit = parsed_limit.unwrap();
+        }
+    }
+
+    match persistence::edge::requests::get_latest_error_logs(limit).await {
+        Ok(logs_opt) => {
+            if logs_opt.is_some() {
+                let logs = logs_opt.unwrap();
+                let mut msg_builder: MessageBuilder = MessageBuilder::new();
+                
+                for log in logs.iter() {
+                    msg_builder.push(format!("({} - {} | {}) {}", log.created_local, log.level.clone().unwrap_or(String::from("Unknown")), log.channel_name.clone().unwrap_or(String::from("No channel")), log.log));
+                    let _ = msg.reply_mention(&ctx, msg_builder.build()).await;
+                }
+            }
+        },
+        Err(error) => {
+            println!("{}", error);
+        }
+    }
 
     Ok(())
 }

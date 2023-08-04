@@ -34,7 +34,8 @@ pub struct Fun;
     not_a_bot,
     search,
     set_sticky,
-    clear_sticky
+    clear_sticky,
+    get_errors_log
 )]
 pub struct Utilities;
 
@@ -70,22 +71,6 @@ async fn main() {
         .group(&ADMIN_GROUP)
         .group(&STOCKS_GROUP);
 
-    if let Some(error) = persistence::edge::requests::insert_discord_user(String::from("oscuro"), String::from("1234"), String::from("123456789000")).await {
-        println!("EdgeDb Error: {}", error);
-    }
-
-    match persistence::edge::requests::get_discord_user_info(String::from("123456789000")).await {
-        Ok(response) => {
-            if response.is_some() {
-                println!("{:#?}", response.unwrap());
-            }
-        },
-        Err(error) => {
-            println!("{}", error);
-        }
-    }
-
-
     let handler: DefaultHandler = DefaultHandler::new();
 
     let mut client = Client::builder(&infos.token, GatewayIntents::all())
@@ -96,5 +81,8 @@ async fn main() {
 
     if let Err(why) = client.start().await {
         println!("An error occurred while running the client: {:?}", why);
+    }
+    else {
+        println!("Bot is now running...");
     }
 }
