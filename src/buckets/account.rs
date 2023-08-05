@@ -2,7 +2,6 @@ use serenity::framework::standard::CommandResult;
 use serenity::framework::standard::macros::command;
 use serenity::prelude::Context;
 use serenity::model::channel::Message;
-use crate::datastructs::SanitizedMessage;
 use crate::persistence::edge::requests::insert_discord_user;
 use crate::utils::logging::db_log::log_error;
 
