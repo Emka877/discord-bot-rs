@@ -7,3 +7,5 @@ logs
 /.idea
 .env
 discordbot.service
+/dbschema
+edgedb.toml
