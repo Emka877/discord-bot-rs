@@ -9,3 +9,4 @@ logs
 discordbot.service
 /dbschema
 edgedb.toml
+/runtime
