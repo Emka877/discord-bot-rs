@@ -108,10 +108,10 @@ pub mod requests {
                 Ok(conn) => {
                     let result = conn.execute("
                     INSERT Discord::ChannelMessage {
-                        author: <Discord::User>$0,
-                        channel_id: <str>$1,
-                        is_bot: <bool>$2,
-                        message: <str>$3
+                        author := <Discord::User>$0,
+                        channel_id := <str>$1,
+                        is_bot := <bool>$2,
+                        message := <str>$3
                     }",
                     &(author_uuid.unwrap_or(Uuid::nil()), channel_id, is_bot, message)).await;
                     
