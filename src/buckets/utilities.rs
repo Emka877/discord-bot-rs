@@ -177,7 +177,7 @@ pub async fn get_errors_log(ctx: &Context, msg: &Message) -> CommandResult {
         }
     }
 
-    match persistence::edge::requests::get_latest_error_logs(limit).await {
+    match persistence::edge::requests::read::get_latest_error_logs(limit).await {
         Ok(logs_opt) => {
             if logs_opt.is_some() {
                 let logs = logs_opt.unwrap();

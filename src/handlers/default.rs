@@ -6,8 +6,10 @@ use serenity::{
 };
 use std::sync::Arc;
 
-use crate::utils::bot_reply::reply_question;
+use crate::utils::{bot_reply::reply_question, logging::db_log::LogErrorLevel};
 use crate::{datastructs::SanitizedMessage, plugins::*};
+use crate::persistence::edge::requests::create::add_message;
+use crate::utils::logging::db_log::log_error;
 
 pub struct DefaultHandler;
 
@@ -38,8 +40,14 @@ impl EventHandler for DefaultHandler {
         let is_self: bool = msg.is_own(&ctx.cache);
         // Sanitize the message
         let sani: SanitizedMessage = msg.clone().into();
+        
         // Check if a message was sent to one of the scanned channels
         message_announcer::message_announcer(Arc::new(ctx.clone()), msg.clone()).await;
+
+        // OpenAI feature - Save the message in the DB (even if it's the bot sending it)
+        if let Err(error) = add_message(sani.full_content, msg.author.id.to_string(), msg.channel_id.to_string(), is_self).await {
+            log_error(format!("{}", error), LogErrorLevel::ERROR, msg.channel_id.to_string(), true).await;
+        }
 
         if !is_self {
             // Refresh the sticky message, if any

@@ -4,6 +4,7 @@ use serenity::model::id::UserId;
 use serenity::prelude::GatewayIntents;
 use serenity::{client::Client, framework::standard::macros::group};
 use std::collections::{hash_map::RandomState, HashSet};
+use dotenv::dotenv;
 
 mod buckets;
 mod constants;
@@ -16,6 +17,7 @@ mod utils;
 use datastructs::bot_info::{read_bot_infos, BotInfo};
 use buckets::*;
 use handlers::*;
+#[allow(unused_imports)]
 use plugins::*;
 
 #[group]
@@ -52,6 +54,11 @@ pub struct Account;
 #[tokio::main]
 async fn main() {
     let infos: BotInfo = read_bot_infos();
+    
+    dotenv().ok();
+    // let openai_key = std::env::var("OPENAI_KEY")
+    //     .expect("Could not find the OpenAI token env variable in .env");
+
     let framework = StandardFramework::new()
         .configure(|c| {
             let mut owners_hs: HashSet<UserId, RandomState> = HashSet::new();
@@ -86,7 +93,7 @@ async fn main() {
     if let Err(why) = client.start().await {
         utils::logging::db_log::log_error(
             format!("An error occurred while running the client: {:?}", why),
-            String::from("error"),
+            utils::logging::db_log::LogErrorLevel::ERROR,
             String::from(""),
             true
         ).await;
