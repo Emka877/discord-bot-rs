@@ -93,38 +93,38 @@ pub mod requests {
             }
         }
         
-        pub async fn add_message(message: String, author_discord_id: String, channel_id: String, is_bot: bool) -> anyhow::Result<(), edgedb_tokio::Error> {
-            let mut author_uuid: Option<Uuid> = None;
-            let author_account = super::read::get_discord_user_info(author_discord_id).await;
-
-            if author_account.is_ok() {
-                match author_account.unwrap() {
-                    Some(x) => { author_uuid = Some(x.id) },
-                    None => { /* Set the link to nothing */},
-                }
-            }
-
-            match get_conn().await {
-                Ok(conn) => {
-                    let result = conn.execute("
-                    INSERT Discord::ChannelMessage {
-                        author := <Discord::User>$0,
-                        channel_id := <str>$1,
-                        is_bot := <bool>$2,
-                        message := <str>$3
-                    }",
-                    &(author_uuid.unwrap_or(Uuid::nil()), channel_id, is_bot, message)).await;
-                    
-                    if result.is_err() {
-                        return Err(result.unwrap_err());
-                    };
-
-                    Ok(())
-                },
-                Err(err) => {
-                    return Err(err);
-                }
-            }
-        }
+        // pub async fn add_message(message: String, author_discord_id: String, channel_id: String, is_bot: bool) -> anyhow::Result<(), edgedb_tokio::Error> {
+        //     let mut author_uuid: Option<Uuid> = None;
+        //     let author_account = super::read::get_discord_user_info(author_discord_id).await;
+        //
+        //     if author_account.is_ok() {
+        //         match author_account.unwrap() {
+        //             Some(x) => { author_uuid = Some(x.id) },
+        //             None => { /* Set the link to nothing */},
+        //         }
+        //     }
+        //
+        //     match get_conn().await {
+        //         Ok(conn) => {
+        //             let result = conn.execute("
+        //             INSERT Discord::ChannelMessage {
+        //                 author := <Discord::User>$0,
+        //                 channel_id := <str>$1,
+        //                 is_bot := <bool>$2,
+        //                 message := <str>$3
+        //             }",
+        //             &(author_uuid.unwrap_or(Uuid::nil()), channel_id, is_bot, message)).await;
+        //
+        //             if result.is_err() {
+        //                 return Err(result.unwrap_err());
+        //             };
+        //
+        //             Ok(())
+        //         },
+        //         Err(err) => {
+        //             return Err(err);
+        //         }
+        //     }
+        // }
     }
 }

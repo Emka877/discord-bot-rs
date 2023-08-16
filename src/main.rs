@@ -25,7 +25,7 @@ use plugins::*;
 pub struct Helpers;
 
 #[group]
-#[commands(eight_ball, roll, pick)]
+#[commands(eight_ball, roll, pick, talk)]
 pub struct Fun;
 
 #[group]
