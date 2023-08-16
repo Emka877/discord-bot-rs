@@ -6,7 +6,7 @@ use serenity::{
 };
 use std::sync::Arc;
 
-use crate::utils::{bot_reply::reply_question, logging::db_log::LogErrorLevel};
+use crate::utils::bot_reply::reply_question;
 use crate::{datastructs::SanitizedMessage, plugins::*};
 // use crate::persistence::edge::requests::create::add_message;
 // use crate::utils::logging::db_log::log_error;

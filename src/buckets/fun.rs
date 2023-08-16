@@ -1,17 +1,14 @@
 use std::str::FromStr;
-use async_openai::error::OpenAIError;
-use async_openai::types::{CreateChatCompletionRequestArgs, ChatCompletionRequestMessageArgs, ChatCompletionRequestMessage, Role, CreateChatCompletionResponse};
+use async_openai::types::{CreateChatCompletionRequestArgs, ChatCompletionRequestMessageArgs, ChatCompletionRequestMessage, Role};
 use rand::prelude::IteratorRandom;
 use regex::Regex;
 use serenity::{
     client::Context,
     framework::standard::{macros::command, Args, CommandResult},
-    model::{channel::Message, prelude::ChannelId},
+    model::channel::Message,
 };
 use serenity::framework::standard::CommandError;
 use serenity::http::CacheHttp;
-use serenity::http::routing::RouteInfo::GetMessages;
-use serenity::model::prelude::GuildChannel;
 use serenity::utils::MessageBuilder;
 
 use crate::datastructs::SanitizedMessage;
@@ -79,7 +76,7 @@ pub async fn pick(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
 
 #[command]
 #[aliases("think", "opinion")]
-pub async fn talk(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+pub async fn talk(ctx: &Context, msg: &Message, _args: Args) -> CommandResult {
     println!("in talk");
     let mut limit: usize = 10;
     // let channel_id: ChannelId = msg.channel_id.clone();

@@ -52,8 +52,6 @@ pub mod requests {
     }
 
     pub mod create {
-        use edgedb_protocol::model::Uuid;
-
         use super::*;
 
         pub async fn create_discord_user(username: String, display_name: String, unique_id: String) -> Option<edgedb_tokio::Error> {
