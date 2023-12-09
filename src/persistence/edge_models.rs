@@ -7,6 +7,7 @@ pub struct User {
     pub username: String,
     pub unique_id: String,
     pub display_name: String,
+    pub money: f64
 }
 
 #[derive(Queryable, Debug)]
@@ -26,4 +27,23 @@ pub struct ChannelMessage {
     pub is_bot: bool,
     pub message: String,
     pub created_local: LocalDatetime,
+}
+
+// Portfolio
+#[derive(Queryable, Debug)]
+pub struct PortfolioUser {
+    portfolio: Portfolio,
+}
+
+#[derive(Queryable, Debug)]
+pub struct Portfolio {
+    lines: Vec<PortfolioLines>,
+}
+
+#[derive(Queryable, Debug)]
+pub struct PortfolioLines {
+    ticker: String,
+    quantity: f64,
+    created_at: LocalDatetime,
+    bought_at: f64,
 }

@@ -2,7 +2,10 @@ use serenity::framework::standard::macros::command;
 use serenity::framework::standard::{Args, CommandResult};
 use serenity::model::channel::Message;
 use serenity::prelude::*;
+use serenity::utils::MessageBuilder;
 
+use crate::persistence::edge::requests::read::get_discord_user_info;
+use crate::utils::logging::db_log::*;
 use crate::utils::stock_utils::{epoch_to_date, get_stock_price};
 
 #[command]
@@ -54,6 +57,74 @@ pub async fn stocks(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
         };
         // Send the stock price to the channel
         msg.reply(&ctx.http, &stock_answer).await?;
+    }
+
+    Ok(())
+}
+
+// TODO: Implement these below (stocks & finances commands)
+
+#[command]
+#[aliases(buyStock)]
+#[example = "!buy_stock $NVDA 3.1416"]
+#[usage = "!buy_stock $NVDA 3.1416"]
+#[num_args(2)]
+#[help_available]
+pub async fn buy_stock(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    // Needed arguments: ticker amount (float accepted)
+    // Example: !buy_stock $NVDA 9.15
+
+    // Get the ticker price
+
+    // Check if enough money in user account
+
+    // Perform the operation
+
+    unimplemented!()
+    //Ok(())
+}
+
+#[command]
+pub async fn sell_stock(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    unimplemented!()
+    // Ok(())
+}
+
+#[command]
+pub async fn consult_portfolio(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    unimplemented!()
+    //Ok(())
+}
+
+#[command]
+#[num_args(0)]
+#[aliases(finance, finances, financial)]
+#[description("It's important to know what is in your wallet")]
+#[example("!finances")]
+#[help_available]
+pub async fn get_financial_infos(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    let user_uid = msg.author.id;
+    let query_result = get_discord_user_info(user_uid.to_string()).await;
+
+    match query_result {
+        Ok(opt_user) => {
+            match opt_user {
+                Some(user) => {
+                    let reply = MessageBuilder::new()
+                        .push_line(format!("Your money: €{:.2}", user.money))
+                        .build();
+                    let _ = msg.reply(&ctx.http, reply).await;
+                },
+                None => {
+                    let _ = log_error(format!("User not found."), LogErrorLevel::ERROR, msg.channel_id.to_string(), true).await;
+                    // return Err(format!("(get_financial_infos) User not found."));
+                }
+            }
+        },
+        Err(err) => {
+            let _ = log_error(format!("(get_financial_infos) Could not query financial infos: {}.", err), LogErrorLevel::ERROR, msg.channel_id.to_string(), true).await;
+            // return Err(format!("(get_financial_infos) Could not query financial infos: {}.", err));
+        }
     }
 
     Ok(())

@@ -1,6 +1,6 @@
 [package]
 name = "discord_bot_rs"
-version = "1.8.2"
+version = "1.8.4"
 authors = ["Oscuro87"]
 edition = "2021"
 
@@ -10,24 +10,25 @@ serenity = "0.11.6"
 
 # Common crates
 ron = "0.8.1"
-serde = { version = "1.0.183", features = ["derive"] }
+serde = { version = "1.0.188", features = ["derive"] }
 serde_json = "1.0.105"
 rand = "0.8.5"
-regex = "1.9.3"
-chrono = "0.4.26"
+regex = "1.9.5"
+chrono = "0.4.29"
 chrono-tz = { version = "0.8.3", features = ["serde"] }
 tokio = { version = "1.32.0", features = ["macros", "rt-multi-thread"] }
-reqwest = "0.11.18"
+reqwest = "0.11.20"
 lazy_static = "1.4.0"
 anyhow = "1.0.75"
 dotenv = "0.15.0"
 
 # OpenAI
-async-openai = "0.13.1"
+async-openai = "0.14.0"
 
 # Edge DB
 edgedb-tokio = "0.5.0"
 edgedb-derive = "0.5.1"
 edgedb-protocol = "0.6.0"
+
 # Custom libraries
 owm-rs = { version = "1.0.14", features = ["utils"] }

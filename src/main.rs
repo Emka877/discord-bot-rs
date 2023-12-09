@@ -41,7 +41,7 @@ pub struct Fun;
 pub struct Utilities;
 
 #[group]
-#[commands(stocks)]
+#[commands(stocks, buy_stock, sell_stock, consult_portfolio, get_financial_infos)]
 pub struct Stocks;
 
 #[group]

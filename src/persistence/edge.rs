@@ -5,10 +5,12 @@ pub mod requests {
         edgedb_tokio::create_client().await
     }
 
-    pub mod read {
+    pub mod read 
+    {
         use super::*;
 
-        pub async fn get_discord_user_info(unique_id: String) -> anyhow::Result<Option<User>, edgedb_tokio::Error> {
+        pub async fn get_discord_user_info(unique_id: String) -> anyhow::Result<Option<User>, edgedb_tokio::Error> 
+        {
             match get_conn().await {
                 Ok(conn) => {
                     let result: Result<Option<User>, edgedb_tokio::Error> = conn.query_single("
@@ -16,7 +18,8 @@ pub mod requests {
                             id,
                             username,
                             unique_id,
-                            display_name
+                            display_name,
+                            money
                         }
                         filter .unique_id = <str>$0", &(unique_id,)).await;
                     match result {
@@ -28,7 +31,8 @@ pub mod requests {
             }
         }
     
-        pub async fn get_latest_error_logs(limit: i32) -> anyhow::Result<Option<Vec<ErrorLog>>, edgedb_tokio::Error> {
+        pub async fn get_latest_error_logs(limit: i32) -> anyhow::Result<Option<Vec<ErrorLog>>, edgedb_tokio::Error> 
+        {
             match get_conn().await {
                 Ok(conn) => {
                     let result = conn.query::<ErrorLog, _>("select Dev::ErrorLog {
@@ -48,6 +52,11 @@ pub mod requests {
                 },
                 Err(error) => Err(error)
             }
+        }
+        
+        pub async fn get_user_portfolio(unique_id: String) -> anyhow::Result<Option<PortfolioUser>, edgedb_tokio::Error>
+        {
+            unimplemented!()
         }
     }
 
