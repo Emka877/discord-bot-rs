@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use serenity::framework::standard::StandardFramework;
 use serenity::model::id::UserId;
 use serenity::prelude::GatewayIntents;
@@ -25,7 +24,7 @@ use plugins::*;
 pub struct Helpers;
 
 #[group]
-#[commands(eight_ball, roll, pick, talk)]
+#[commands(eight_ball, roll, pick)]
 pub struct Fun;
 
 #[group]

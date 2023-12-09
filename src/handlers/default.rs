@@ -8,8 +8,6 @@ use std::sync::Arc;
 
 use crate::utils::bot_reply::reply_question;
 use crate::{datastructs::SanitizedMessage, plugins::*};
-// use crate::persistence::edge::requests::create::add_message;
-// use crate::utils::logging::db_log::log_error;
 
 pub struct DefaultHandler;
 
@@ -25,6 +23,7 @@ impl EventHandler for DefaultHandler {
         // Tea time announcer
         tea_time::tea_time_announcer(Arc::new(ctx.clone())).await;
         weather::task_thunderstorm_sentry(Arc::new(ctx.clone())).await;
+        release_announcer::task_game_release_announcement_sentry(Arc::new(ctx.clone())).await;
     }
 
     async fn guild_member_addition(&self, ctx: Context, new_member: Member) {
