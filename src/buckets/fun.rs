@@ -1,5 +1,3 @@
-use std::str::FromStr;
-use async_openai::types::{CreateChatCompletionRequestArgs, ChatCompletionRequestMessageArgs, ChatCompletionRequestMessage, Role};
 use rand::prelude::IteratorRandom;
 use regex::Regex;
 use serenity::{
@@ -7,15 +5,9 @@ use serenity::{
     framework::standard::{macros::command, Args, CommandResult},
     model::channel::Message,
 };
-use serenity::framework::standard::CommandError;
-use serenity::http::CacheHttp;
-use serenity::utils::MessageBuilder;
-
 use crate::datastructs::SanitizedMessage;
 use crate::utils::bot_reply::reply_question;
 use crate::utils::Roller;
-use crate::utils::logging::db_log;
-use crate::utils::logging::db_log::LogErrorLevel;
 
 #[command]
 #[min_args(1)]
@@ -71,86 +63,5 @@ pub async fn pick(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
         .expect("Cannot pick any option in picker!");
     let _ = msg.reply(&ctx.http, format!("{}", pick)).await;
 
-    Ok(())
-}
-
-#[command]
-#[aliases("think", "opinion")]
-pub async fn talk(ctx: &Context, msg: &Message, _args: Args) -> CommandResult {
-    println!("in talk");
-    let mut limit: usize = 10;
-    // let channel_id: ChannelId = msg.channel_id.clone();
-    let sanitized_msg: SanitizedMessage = msg.into();
-
-    // First argument should be an integer to limit the amount of messages to take into account
-    match sanitized_msg.arguments.get(0) {
-        None => {}
-        Some(try_limit) => {
-            limit = usize::from_str(try_limit).unwrap_or(limit).clamp(1, 100);
-        }
-    }
-    
-    // Take last X messages from the discord channel history
-    if let Ok(channel) = msg.channel(&ctx.http()).await {
-        if let Some(guild) = channel.guild() {
-            if let Ok(history) = guild.messages(
-                &ctx,
-                |retriever| {
-                    retriever.before(msg.id).limit(limit as u64)
-                }
-            ).await {
-                //// Transform it into an OpenAI request
-                // NOTE: This reads the OPENAI_API_KEY environment variable, make it available beforehand (Load a .env file for example)
-                let client = async_openai::Client::new();
-
-                let messages: Vec<ChatCompletionRequestMessage> = history.iter().map(|x| {
-                    let role: Role = match x.author.bot {
-                        true => Role::Assistant,
-                        false => Role::User
-                    };
-
-                    ChatCompletionRequestMessageArgs::default()
-                        .role(role)
-                        .content(msg.content.clone())
-                        .build()
-                        .unwrap()
-                }).collect();
-
-                if let Ok(request) = CreateChatCompletionRequestArgs::default()
-                    .max_tokens(512u16)
-                    .model("gpt-3.5-turbo")
-                    .messages(messages)
-                    .build()
-                {
-                    let response = match client.chat().create(request).await {
-                        Ok(x) => x,
-                        Err(error) => {
-                            println!("{}", error);
-                            return Err(CommandError::from(error));
-                        }
-                    };
-
-                    let mut bot_response = MessageBuilder::new();
-                    bot_response.push_line(response.object);
-                    if let Err(error) = msg.reply_mention(&ctx.http(), bot_response.build()).await {
-                        db_log::log_error(format!("{}", error), LogErrorLevel::ERROR, msg.channel_id.to_string(), true).await;
-                    }
-                }
-                else {
-                    println!("Cannot build request.");
-                }
-            }
-            else {
-                println!("Cannot get history.");
-            }
-        }
-        else {
-            println!("Guild not found.");
-        }
-    }
-    else {
-        println!("Channel not found.");
-    }
-    
     Ok(())
 }
